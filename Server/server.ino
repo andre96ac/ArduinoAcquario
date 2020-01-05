@@ -1,6 +1,6 @@
 
 
-/**
+/*
 Questo programma mostra come sia possibile inserire del codice HTML all'interno della
 pagina web del webserver di Arduino*/
  
