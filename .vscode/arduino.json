@@ -1,5 +1,5 @@
 {
-    "sketch": "Arduino\\provaLed.ino",
+    "sketch": "Server\\server.ino",
     "board": "arduino:avr:uno",
     "port": "COM4"
 }

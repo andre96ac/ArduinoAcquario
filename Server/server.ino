@@ -12,6 +12,7 @@ pagina web del webserver di Arduino*/
  
 // Mac Address di Arduino
 byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte ip[] = {192, 168, 1, 3};
  
 // Viene inizializzata la libreria Ethernet di Arduino e il webserver gira sulla porta 80
 EthernetServer server(80);
@@ -122,7 +123,7 @@ Led led1(5), led2(3);
 void setup() {
   Serial.begin(9600);
   // Viene inilizzato il webserver e la connessione di rete
-  Ethernet.begin(mac);
+  Ethernet.begin(mac, ip);
   server.begin();
   Serial.print("server is at ");
   Serial.println(Ethernet.localIP());
