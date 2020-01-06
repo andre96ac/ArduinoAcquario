@@ -9,7 +9,6 @@ pagina web del webserver di Arduino*/
 #define ACCESO 1
 #define SPENTO 0
 #define NMAXPARAMS 10
-#define NMAXCONTROLLERS 5
  
 // Mac Address di Arduino
 byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -196,7 +195,7 @@ class Database
     static const int NDIGITALPIN=14;
     static const int NANALOGPIN=6;
     int nControllers;
-    //static const int NMAXCONTROLLERS=5;
+    static const int NMAXCONTROLLERS=5;
     Led *leds[NMAXLED];
     LedController *controllers[NMAXCONTROLLERS];
     bool dPinsBusy[NDIGITALPIN]={1,1,0,0,0,0,0,0,0,0,1,1,1,1};
@@ -207,7 +206,7 @@ class Database
       nControllers=0;
     };
 
-    void AddLed (int pin)
+    void addLed (int pin)
     {
       //se il pin è libero
       if (dPinsBusy[pin]==false)
@@ -235,24 +234,33 @@ class Database
       {
         if (leds[i]->returnPin()==pin)
         {
+          leds[i]->spegni();
           delete leds[i];
           dPinsBusy[pin]=false;
         }
       }
 
+    };
+
+    void cambiaStato(int pin)
+    {
+      for (int i=0; i<NMAXLED; i++)
+      {
+        if (leds[i]->returnPin()==pin)
+        {
+          leds[i]->cambiaStato();
+        }
+      }
     }
+
+    
 
 };
 
-
-
-Led led1(3), led2(5), led3(7);
-LedController *controllers[NMAXCONTROLLERS];
-int ncontroller=0;
+Database db;
 
 void setup() {
   Serial.begin(9600);
-  // Viene inilizzato il webserver e la connessione di rete
   Ethernet.begin(mac, ip);
   server.begin();
   Serial.print("server is at ");
@@ -260,7 +268,8 @@ void setup() {
 
 }
  
-void loop() {
+void loop() 
+{
   char c;
   String request; 
   int nParams;
@@ -301,10 +310,18 @@ void loop() {
     client.stop();
     Serial.println("client disconnected");
   }
-  
+
   //esecuzione pratica delle azioni 
   Messaggio messaggio(request);
-    if (*(messaggio.returnComando())=="switch")
+  if ((*(messaggio.returnComando()))=="switch")
+    db.cambiaStato((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="addled")
+    db.addLed((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="addled")
+    db.removeLed((messaggio.returnParams())[0]);
+}
+    
+    /*if (*(messaggio.returnComando())=="switch")
     {
       switch ((messaggio.returnParams())[0])
       {
@@ -355,4 +372,4 @@ void loop() {
       controllers[i]->lampeggia();
     }
   }
-}
+}*/
