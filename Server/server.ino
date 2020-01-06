@@ -132,7 +132,8 @@ class LedController
 {
   private:
     int id;
-    Led *pL1, *pL2;
+    Led *pL1;
+    Led *pL2;
     int deltaTime;
     unsigned long time;
     bool state;
@@ -147,7 +148,7 @@ class LedController
     {
       return state;
     }
-    void setLeds(Led* ptrLed1, Led* ptrLed2)
+    void setLeds(Led *ptrLed1, Led *ptrLed2)
     {
       pL1=ptrLed1;
       pL2=ptrLed2;
@@ -161,16 +162,29 @@ class LedController
       state=stato;
       if(state==ACCESO)
       {
+        pL1->isBusy(true);
+        pL2->isBusy(true);
         pL1->accendi();
         pL2->spegni();
+        
       }
       else
       {
+        pL1->isBusy(false);
+        pL2->isBusy(false);
         pL1->spegni();
         pL2->spegni();
       }
       
     };
+
+    void changeState()
+    {
+      if (state==ACCESO)
+        setState(SPENTO);
+      else
+        setState(ACCESO);      
+    }
     
     void lampeggia()
     {
@@ -186,6 +200,10 @@ class LedController
     {
       return deltaTime;
     };
+    int returnId()
+    {
+      return id;
+    }
 };
 
 class Database
@@ -194,7 +212,6 @@ class Database
     static const int NMAXLED=10;
     static const int NDIGITALPIN=14;
     static const int NANALOGPIN=6;
-    int nControllers;
     static const int NMAXCONTROLLERS=5;
     Led *leds[NMAXLED];
     LedController *controllers[NMAXCONTROLLERS];
@@ -203,8 +220,19 @@ class Database
   public:
     Database ()
     {
-      nControllers=0;
     };
+
+    //ritrona la posizione di un led con uno specifico pin all'interno del vettore di led
+    int ledPosition(int pin)
+    {
+      int i;
+      for (i=0; i<NMAXLED; i++)
+      {
+        if (leds[i]->returnPin()==pin)
+          break;
+      }
+      return i;
+    }
 
     void addLed (int pin)
     {
@@ -229,32 +257,66 @@ class Database
 
     void removeLed(int pin)
     {
-      //cerca se c'è effettivamente un led con quel pin assegnato e lo rimuove
-      for (int i=0; i<NMAXLED; i++)
-      {
-        if (leds[i]->returnPin()==pin)
-        {
-          leds[i]->spegni();
-          delete leds[i];
-          dPinsBusy[pin]=false;
-        }
-      }
-
+      int posizione=ledPosition(pin);
+      leds[posizione]->spegni();
+      delete leds[posizione];
+      dPinsBusy[pin]=false;
     };
 
-    void cambiaStato(int pin)
+    void cambiaStatoLed(int pin)
     {
-      for (int i=0; i<NMAXLED; i++)
+      int posizione=ledPosition(pin);
+      if (leds[posizione]->isBusy()==false)
+        leds[posizione]->cambiaStato();
+    };
+
+    void addController(int id, int pin1, int pin2, int secondi)
+    {
+      //trovo il primo spazio nell'array di controllers
+      for (int i=0; i<NMAXCONTROLLERS;i++)
       {
-        if (leds[i]->returnPin()==pin)
+        if (controllers[i]==NULL)
         {
-          leds[i]->cambiaStato();
+          //creo il nuovo controller nello spazio vuoto trovato
+          controllers[i]= new LedController(id);
+          //setto i led passando l'indirizzo dell elemento alla posizione trovata da ledPosition()
+          controllers[i]->setLeds((leds[ledPosition(pin1)]),(leds[ledPosition(pin2)]));
+          //setto il tempo sulla base del parametro
+          controllers[i]->setTime(secondi);
+          break;
         }
       }
+    };
+
+    int controllerPosition(int id)
+    {
+      for (int i=0; i<NMAXCONTROLLERS; i++)
+      {
+        if (controllers[i]->returnId()==id)
+        {
+          return i;
+          break;
+        }
+      }
+    };
+
+    void changeControllerState(int id)
+    {
+      int posizione=controllerPosition(id);
+      controllers[posizione]->changeState();
     }
 
-    
 
+
+    void executeTimingFunctions()
+    {
+      //faccio funzionare tutti i controller
+      for (int i=0; i<NMAXCONTROLLERS; i++)
+      {
+        if (controllers[i]!=NULL)
+          controllers[i]->lampeggia();
+      }
+    };
 };
 
 Database db;
@@ -275,6 +337,7 @@ void loop()
   int nParams;
   int* params;
   String* command;
+
   // Vengono ascoltati nuovi client
   EthernetClient client = server.available();
   if (client) 
@@ -314,11 +377,24 @@ void loop()
   //esecuzione pratica delle azioni 
   Messaggio messaggio(request);
   if ((*(messaggio.returnComando()))=="switch")
-    db.cambiaStato((messaggio.returnParams())[0]);
+    db.cambiaStatoLed((messaggio.returnParams())[0]);
   else if ((*(messaggio.returnComando()))=="addled")
     db.addLed((messaggio.returnParams())[0]);
-  else if ((*(messaggio.returnComando()))=="addled")
+  else if ((*(messaggio.returnComando()))=="removeled")
     db.removeLed((messaggio.returnParams())[0]);
+  //mi aspetto un comando "?newcontroller&id&pinled1&pinled2&millisecondi"
+  else if ((*(messaggio.returnComando()))=="addcontroller")
+  {
+    db.addController(
+      ((messaggio.returnParams())[0]),
+      ((messaggio.returnParams())[1]),
+      ((messaggio.returnParams())[2]),
+      ((messaggio.returnParams())[3])
+      );
+  }
+  else if ((*(messaggio.returnComando()))=="changecontrollerstate")
+    db.changeControllerState(messaggio.returnParams()[0]);
+  db.executeTimingFunctions();
 }
     
     /*if (*(messaggio.returnComando())=="switch")
