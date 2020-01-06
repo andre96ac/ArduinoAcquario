@@ -9,6 +9,7 @@ pagina web del webserver di Arduino*/
 #define ACCESO 1
 #define SPENTO 0
 #define NMAXPARAMS 10
+#define NMAXCONTROLLERS 10
  
 // Mac Address di Arduino
 byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -30,13 +31,11 @@ class Led
       };
       void accendi()
       {
-        Serial.println("accendo...");
         digitalWrite(pin, HIGH);
         stato=ACCESO;
       };
       void spegni()
       {
-        Serial.println("spengo...");
         digitalWrite(pin, LOW);
         stato=SPENTO;
       };
@@ -118,8 +117,73 @@ class Messaggio
     }
 };
 
-Led led1(5), led2(3);
+class LedController
+{
+  private:
+    int id;
+    Led *pL1, *pL2;
+    int deltaTime;
+    unsigned long time;
+    bool state;
+  public:
+    LedController(int identifiativo)
+    {
+      id=identifiativo;
+      time=0;
+      state=SPENTO;
+    };
+    bool returnState()
+    {
+      return state;
+    }
+    void setLeds(Led* ptrLed1, Led* ptrLed2)
+    {
+      pL1=ptrLed1;
+      pL2=ptrLed2;
+    };
+    void setTime(int intervallo)
+    {
+      deltaTime=intervallo;
+    };
+    void setState(bool stato)
+    {
+      state=stato;
+      if(state==ACCESO)
+      {
+        pL1->accendi();
+        pL2->spegni();
+      }
+      else
+      {
+        pL1->spegni();
+        pL2->spegni();
+      }
+      
+    };
+    
+    void lampeggia()
+    {
+      if ((millis()>=(time+deltaTime))&&(state==ACCESO))
+      {
+        pL1->cambiaStato();
+        pL2->cambiaStato();
+        time=millis();
+      }
+    };
 
+    int returnTime()
+    {
+      return deltaTime;
+    };
+};
+
+
+
+
+
+Led led1(3), led2(5), led3(7);
+LedController *controllers[NMAXCONTROLLERS];
+int ncontroller=0;
 void setup() {
   Serial.begin(9600);
   // Viene inilizzato il webserver e la connessione di rete
@@ -127,6 +191,7 @@ void setup() {
   server.begin();
   Serial.print("server is at ");
   Serial.println(Ethernet.localIP());
+
 }
  
 void loop() {
@@ -165,7 +230,7 @@ void loop() {
         }
       }
     }
-    delay(100);
+    delay(1);
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
@@ -181,9 +246,46 @@ void loop() {
         case 2:
           led2.cambiaStato();
           Serial.println("ho cambiato stato al led 2");
-
           break;
+        case 3:
+          led3.cambiaStato();
+          Serial.println("ho cambiato stato al led 3");
+          break
       }
+    }
+    //se il comando è newcontroller
+    else if (*(messaggio.returnComando())=="newcontroller")
+    {
+      //creo il nuovo controller(ora gli assegno di default i due led) e setto il tempo sulla base del primo parametro
+      controllers[ncontroller]=new LedController(ncontroller);
+      controllers[ncontroller]->setLeds(&led1,&led2);
+      controllers[ncontroller]->setTime(messaggio.returnParams()[0]);
+      Serial.println(messaggio.returnParams()[0]);
+      Serial.println("ho creato un nuovo controller");
+      Serial.println(controllers[ncontroller]->returnTime());
+      ncontroller++;
+    }
+    //se il comando è SetcontrollerOn
+    else if (*(messaggio.returnComando())=="setcontrolleron")
+    {
+      //setto come "ACCESO" il controller che si trova nella posizione indicata dal primo parametro ricevuto
+      controllers[((messaggio.returnParams())[0])]->setState(ACCESO);
+      Serial.println("ho settato il controller ");
+      Serial.println(((messaggio.returnParams())[0]));
+    }
+    //se il comando è SetcontrollerOn
+    else if (*(messaggio.returnComando())=="setcontrolleroff")
+    {
+      //setto come "SPENTO" il controller che si trova nella posizione del primo parametro ricevuto
+      controllers[((messaggio.returnParams())[0])]->setState(SPENTO);
+    }
+  }
+  //esecuzione pratica delle azioni (in questo caso, scorro tutti i controller, e se ne trovo di accesi, eseguo l'azione del lampeggiare)
+  for (int i=0; i<NMAXCONTROLLERS; i++)
+  {
+    if (controllers[i]!=NULL)
+    {
+      controllers[i]->lampeggia();
     }
   }
 }
