@@ -9,7 +9,7 @@ pagina web del webserver di Arduino*/
 #define ACCESO 1
 #define SPENTO 0
 #define NMAXPARAMS 10
-#define NMAXCONTROLLERS 10
+#define NMAXCONTROLLERS 5
  
 // Mac Address di Arduino
 byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -23,12 +23,21 @@ class Led
     private:
       bool stato=SPENTO;
       int pin;
+      bool busy=false;
     public:
       Led(int nPin)
       {
         pin=nPin;
         pinMode(pin, OUTPUT);
       };
+      bool isBusy()
+      {
+        return busy;
+      };
+      void isBusy(bool scelta)
+      {
+        busy= scelta;
+      }
       void accendi()
       {
         digitalWrite(pin, HIGH);
@@ -56,8 +65,11 @@ class Led
           accendi();
         else
           spegni();
-        
-      }
+      };
+      int returnPin()
+      {
+        return pin;
+      };
 };
 
 class Messaggio
@@ -177,13 +189,67 @@ class LedController
     };
 };
 
+class Database
+{
+  private: 
+    static const int NMAXLED=10;
+    static const int NDIGITALPIN=14;
+    static const int NANALOGPIN=6;
+    int nControllers;
+    //static const int NMAXCONTROLLERS=5;
+    Led *leds[NMAXLED];
+    LedController *controllers[NMAXCONTROLLERS];
+    bool dPinsBusy[NDIGITALPIN]={1,1,0,0,0,0,0,0,0,0,1,1,1,1};
 
+  public:
+    Database ()
+    {
+      nControllers=0;
+    };
+
+    void AddLed (int pin)
+    {
+      //se il pin è libero
+      if (dPinsBusy[pin]==false)
+      {
+        //cerca la prima posizione libera nel vettore
+        for (int i=0; i<NMAXLED; i++)
+        {
+          //quando la trovi
+          if (leds[i]==NULL)
+          {
+            //crea il nuovo led ed inseriscilo nella posizione vuota trovata
+            leds[i]=new Led(pin);
+            //setta il pin utilizzato come occupato
+            dPinsBusy[pin]=true;
+            break;
+          }
+        }
+      }
+    };
+
+    void removeLed(int pin)
+    {
+      //cerca se c'è effettivamente un led con quel pin assegnato e lo rimuove
+      for (int i=0; i<NMAXLED; i++)
+      {
+        if (leds[i]->returnPin()==pin)
+        {
+          delete leds[i];
+          dPinsBusy[pin]=false;
+        }
+      }
+
+    }
+
+};
 
 
 
 Led led1(3), led2(5), led3(7);
 LedController *controllers[NMAXCONTROLLERS];
 int ncontroller=0;
+
 void setup() {
   Serial.begin(9600);
   // Viene inilizzato il webserver e la connessione di rete
@@ -234,7 +300,10 @@ void loop() {
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
-    Messaggio messaggio(request);
+  }
+  
+  //esecuzione pratica delle azioni 
+  Messaggio messaggio(request);
     if (*(messaggio.returnComando())=="switch")
     {
       switch ((messaggio.returnParams())[0])
@@ -250,7 +319,7 @@ void loop() {
         case 3:
           led3.cambiaStato();
           Serial.println("ho cambiato stato al led 3");
-          break
+          break;
       }
     }
     //se il comando è newcontroller
@@ -279,8 +348,6 @@ void loop() {
       //setto come "SPENTO" il controller che si trova nella posizione del primo parametro ricevuto
       controllers[((messaggio.returnParams())[0])]->setState(SPENTO);
     }
-  }
-  //esecuzione pratica delle azioni (in questo caso, scorro tutti i controller, e se ne trovo di accesi, eseguo l'azione del lampeggiare)
   for (int i=0; i<NMAXCONTROLLERS; i++)
   {
     if (controllers[i]!=NULL)
