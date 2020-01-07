@@ -9,7 +9,6 @@ pagina web del webserver di Arduino*/
 #define ACCESO 1
 #define SPENTO 0
 #define NMAXPARAMS 10
-#define NMAXCONTROLLERS 10
  
 // Mac Address di Arduino
 byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -23,12 +22,21 @@ class Led
     private:
       bool stato=SPENTO;
       int pin;
+      bool busy=false;
     public:
       Led(int nPin)
       {
         pin=nPin;
         pinMode(pin, OUTPUT);
       };
+      bool isBusy()
+      {
+        return busy;
+      };
+      void isBusy(bool scelta)
+      {
+        busy= scelta;
+      }
       void accendi()
       {
         digitalWrite(pin, HIGH);
@@ -56,8 +64,11 @@ class Led
           accendi();
         else
           spegni();
-        
-      }
+      };
+      int returnPin()
+      {
+        return pin;
+      };
 };
 
 class Messaggio
@@ -121,7 +132,8 @@ class LedController
 {
   private:
     int id;
-    Led *pL1, *pL2;
+    Led *pL1;
+    Led *pL2;
     int deltaTime;
     unsigned long time;
     bool state;
@@ -136,7 +148,7 @@ class LedController
     {
       return state;
     }
-    void setLeds(Led* ptrLed1, Led* ptrLed2)
+    void setLeds(Led *ptrLed1, Led *ptrLed2)
     {
       pL1=ptrLed1;
       pL2=ptrLed2;
@@ -150,16 +162,29 @@ class LedController
       state=stato;
       if(state==ACCESO)
       {
+        pL1->isBusy(true);
+        pL2->isBusy(true);
         pL1->accendi();
         pL2->spegni();
+        
       }
       else
       {
+        pL1->isBusy(false);
+        pL2->isBusy(false);
         pL1->spegni();
         pL2->spegni();
       }
       
     };
+
+    void changeState()
+    {
+      if (state==ACCESO)
+        setState(SPENTO);
+      else
+        setState(ACCESO);      
+    }
     
     void lampeggia()
     {
@@ -175,18 +200,129 @@ class LedController
     {
       return deltaTime;
     };
+    int returnId()
+    {
+      return id;
+    }
 };
 
+class Database
+{
+  private: 
+    static const int NMAXLED=10;
+    static const int NDIGITALPIN=14;
+    static const int NANALOGPIN=6;
+    static const int NMAXCONTROLLERS=5;
+    Led *leds[NMAXLED];
+    LedController *controllers[NMAXCONTROLLERS];
+    bool dPinsBusy[NDIGITALPIN]={1,1,0,0,0,0,0,0,0,0,1,1,1,1};
+
+  public:
+    Database ()
+    {
+    };
+
+    //ritrona la posizione di un led con uno specifico pin all'interno del vettore di led
+    int ledPosition(int pin)
+    {
+      int i;
+      for (i=0; i<NMAXLED; i++)
+      {
+        if (leds[i]->returnPin()==pin)
+          break;
+      }
+      return i;
+    }
+
+    void addLed (int pin)
+    {
+      //se il pin è libero
+      if (dPinsBusy[pin]==false)
+      {
+        //cerca la prima posizione libera nel vettore
+        for (int i=0; i<NMAXLED; i++)
+        {
+          //quando la trovi
+          if (leds[i]==NULL)
+          {
+            //crea il nuovo led ed inseriscilo nella posizione vuota trovata
+            leds[i]=new Led(pin);
+            //setta il pin utilizzato come occupato
+            dPinsBusy[pin]=true;
+            break;
+          }
+        }
+      }
+    };
+
+    void removeLed(int pin)
+    {
+      int posizione=ledPosition(pin);
+      leds[posizione]->spegni();
+      delete leds[posizione];
+      dPinsBusy[pin]=false;
+    };
+
+    void cambiaStatoLed(int pin)
+    {
+      int posizione=ledPosition(pin);
+      if (leds[posizione]->isBusy()==false)
+        leds[posizione]->cambiaStato();
+    };
+
+    void addController(int id, int pin1, int pin2, int secondi)
+    {
+      //trovo il primo spazio nell'array di controllers
+      for (int i=0; i<NMAXCONTROLLERS;i++)
+      {
+        if (controllers[i]==NULL)
+        {
+          //creo il nuovo controller nello spazio vuoto trovato
+          controllers[i]= new LedController(id);
+          //setto i led passando l'indirizzo dell elemento alla posizione trovata da ledPosition()
+          controllers[i]->setLeds((leds[ledPosition(pin1)]),(leds[ledPosition(pin2)]));
+          //setto il tempo sulla base del parametro
+          controllers[i]->setTime(secondi);
+          break;
+        }
+      }
+    };
+
+    int controllerPosition(int id)
+    {
+      for (int i=0; i<NMAXCONTROLLERS; i++)
+      {
+        if (controllers[i]->returnId()==id)
+        {
+          return i;
+          break;
+        }
+      }
+    };
+
+    void changeControllerState(int id)
+    {
+      int posizione=controllerPosition(id);
+      controllers[posizione]->changeState();
+    }
 
 
 
+    void executeTimingFunctions()
+    {
+      //faccio funzionare tutti i controller
+      for (int i=0; i<NMAXCONTROLLERS; i++)
+      {
+        if (controllers[i]!=NULL)
+          controllers[i]->lampeggia();
+      }
+    };
+};
 
-Led led1(3), led2(5), led3(7);
-LedController *controllers[NMAXCONTROLLERS];
-int ncontroller=0;
+Database db;
+
 void setup() {
   Serial.begin(9600);
-  // Viene inilizzato il webserver e la connessione di rete
   Ethernet.begin(mac, ip);
   server.begin();
   Serial.print("server is at ");
@@ -194,12 +330,14 @@ void setup() {
 
 }
  
-void loop() {
+void loop() 
+{
   char c;
   String request; 
   int nParams;
   int* params;
   String* command;
+
   // Vengono ascoltati nuovi client
   EthernetClient client = server.available();
   if (client) 
@@ -234,58 +372,29 @@ void loop() {
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
-    Messaggio messaggio(request);
-    if (*(messaggio.returnComando())=="switch")
-    {
-      switch ((messaggio.returnParams())[0])
-      {
-        case 1:
-          led1.cambiaStato();
-          Serial.println("ho cambiato stato al led 1");
-          break;
-        case 2:
-          led2.cambiaStato();
-          Serial.println("ho cambiato stato al led 2");
-          break;
-        case 3:
-          led3.cambiaStato();
-          Serial.println("ho cambiato stato al led 3");
-          break
-      }
-    }
-    //se il comando è newcontroller
-    else if (*(messaggio.returnComando())=="newcontroller")
-    {
-      //creo il nuovo controller(ora gli assegno di default i due led) e setto il tempo sulla base del primo parametro
-      controllers[ncontroller]=new LedController(ncontroller);
-      controllers[ncontroller]->setLeds(&led1,&led2);
-      controllers[ncontroller]->setTime(messaggio.returnParams()[0]);
-      Serial.println(messaggio.returnParams()[0]);
-      Serial.println("ho creato un nuovo controller");
-      Serial.println(controllers[ncontroller]->returnTime());
-      ncontroller++;
-    }
-    //se il comando è SetcontrollerOn
-    else if (*(messaggio.returnComando())=="setcontrolleron")
-    {
-      //setto come "ACCESO" il controller che si trova nella posizione indicata dal primo parametro ricevuto
-      controllers[((messaggio.returnParams())[0])]->setState(ACCESO);
-      Serial.println("ho settato il controller ");
-      Serial.println(((messaggio.returnParams())[0]));
-    }
-    //se il comando è SetcontrollerOn
-    else if (*(messaggio.returnComando())=="setcontrolleroff")
-    {
-      //setto come "SPENTO" il controller che si trova nella posizione del primo parametro ricevuto
-      controllers[((messaggio.returnParams())[0])]->setState(SPENTO);
-    }
   }
-  //esecuzione pratica delle azioni (in questo caso, scorro tutti i controller, e se ne trovo di accesi, eseguo l'azione del lampeggiare)
-  for (int i=0; i<NMAXCONTROLLERS; i++)
+
+  //esecuzione pratica delle azioni 
+  Messaggio messaggio(request);
+  if ((*(messaggio.returnComando()))=="switch")
+    db.cambiaStatoLed((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="addled")
+    db.addLed((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="removeled")
+    db.removeLed((messaggio.returnParams())[0]);
+  //mi aspetto un comando "?newcontroller&id&pinled1&pinled2&millisecondi"
+  else if ((*(messaggio.returnComando()))=="addcontroller")
   {
-    if (controllers[i]!=NULL)
-    {
-      controllers[i]->lampeggia();
-    }
+    db.addController(
+      ((messaggio.returnParams())[0]),
+      ((messaggio.returnParams())[1]),
+      ((messaggio.returnParams())[2]),
+      ((messaggio.returnParams())[3])
+      );
   }
+  else if ((*(messaggio.returnComando()))=="changecontrollerstate")
+    db.changeControllerState(messaggio.returnParams()[0]);
+  db.executeTimingFunctions();
 }
+    
+   
