@@ -194,6 +194,11 @@ class LedController
       time=0;
       state=SPENTO;
     };
+
+    ~LedController()
+    {
+      setState(SPENTO);
+    }
     bool returnState()
     {
       return state;
@@ -276,6 +281,11 @@ class Temporizzatore
       Serial.println(id);
       
     };
+
+    ~Temporizzatore()
+    {
+      setState(SPENTO);
+    }
 
     int returnId()
     {
@@ -600,62 +610,65 @@ void loop()
       }
     }
     client.println("HTTP/1.1 200 OK");         
-
     delay(1);
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
-    //esecuzione pratica delle azioni 
-    Messaggio messaggio(request);
-    Serial.println(request);
-    if ((*(messaggio.returnComando()))=="switch")
-      db.cambiaStatoLed((messaggio.returnParams())[0]);
-    else if ((*(messaggio.returnComando()))=="addled")
-      db.addLed((messaggio.returnParams())[0]);
-    else if ((*(messaggio.returnComando()))=="removeled")
-      db.removeLed((messaggio.returnParams())[0]);
-    //mi aspetto un comando "?newcontroller&id&pinled1&pinled2&millisecondi"
-    else if ((*(messaggio.returnComando()))=="addcontroller")
-    {
-      db.addController(
-        ((messaggio.returnParams())[0]),
-        ((messaggio.returnParams())[1]),
-        ((messaggio.returnParams())[2]),
-        ((messaggio.returnParams())[3])
-        );
-    }
-    else if ((*(messaggio.returnComando()))=="changecontrollerstate")
-      db.changeControllerState(messaggio.returnParams()[0]);
-    else if ((*(messaggio.returnComando()))=="removecontroller")
-      db.deletController(messaggio.returnParams()[0]);
-    else if ((*(messaggio.returnComando()))=="addtemporizzatore")
-    {
-        db.addTemporizzatore(
-        ((messaggio.returnParams())[0]),
-        ((messaggio.returnParams())[1]),
-        ((messaggio.returnParams())[2]),
-        ((messaggio.returnParams())[3]),
-        ((messaggio.returnParams())[4]),
-        ((messaggio.returnParams())[5])
-      );
-    }
-    else if ((*(messaggio.returnComando()))=="changetemporizzatorestate")
-      db.changeStateTemporizzatore(messaggio.returnParams()[0]);
-    //
-    else if (*(messaggio.returnComando())=="resettemporizzatore")
-    {
-      db.resetTemporizzatore(
-        ((messaggio.returnParams())[0]),
-        ((messaggio.returnParams())[1]),
-        ((messaggio.returnParams())[2]),
-        ((messaggio.returnParams())[3]),
-        ((messaggio.returnParams())[4])
-      );
-    }
   }
-
+  //esecuzione pratica delle azioni 
+  Messaggio messaggio(request);
+  Serial.println(request);
+  if ((*(messaggio.returnComando()))=="switch")
+    db.cambiaStatoLed((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="addled")
+    db.addLed((messaggio.returnParams())[0]);
+  else if ((*(messaggio.returnComando()))=="removeled")
+    db.removeLed((messaggio.returnParams())[0]);
+  //mi aspetto un comando "?newcontroller&id&pinled1&pinled2&millisecondi"
+  else if ((*(messaggio.returnComando()))=="addcontroller")
+  {
+    db.addController(
+      ((messaggio.returnParams())[0]),
+      ((messaggio.returnParams())[1]),
+      ((messaggio.returnParams())[2]),
+      ((messaggio.returnParams())[3])
+      );
+  }
+  else if ((*(messaggio.returnComando()))=="changecontrollerstate")
+    db.changeControllerState(messaggio.returnParams()[0]);
+  else if ((*(messaggio.returnComando()))=="removecontroller")
+    db.deletController(messaggio.returnParams()[0]);
+  else if ((*(messaggio.returnComando()))=="addtemporizzatore")
+  {
+      db.addTemporizzatore(
+      ((messaggio.returnParams())[0]),
+      ((messaggio.returnParams())[1]),
+      ((messaggio.returnParams())[2]),
+      ((messaggio.returnParams())[3]),
+      ((messaggio.returnParams())[4]),
+      ((messaggio.returnParams())[5])
+    );
+  }
+  else if ((*(messaggio.returnComando()))=="changetemporizzatorestate")
+    db.changeStateTemporizzatore(messaggio.returnParams()[0]);
+  //
+  else if (*(messaggio.returnComando())=="resettemporizzatore")
+  {
+    db.resetTemporizzatore(
+      ((messaggio.returnParams())[0]),
+      ((messaggio.returnParams())[1]),
+      ((messaggio.returnParams())[2]),
+      ((messaggio.returnParams())[3]),
+      ((messaggio.returnParams())[4])
+    );
+  }
+  else if (*(messaggio.returnComando())=="removetemporizzatore")
+  {
+    db.deleteTemporizzatore(
+      ((messaggio.returnParams())[0])
+    );
+  }
   db.executeTimingFunctions();
-  
 }
     
    
