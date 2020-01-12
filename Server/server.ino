@@ -418,7 +418,7 @@ class Database
 
     bool addLed (int pin)
     {
-      bool error=false
+      bool error=false;
       //se il pin è libero
       if (dPinsBusy[pin]==false)
       {
@@ -610,7 +610,7 @@ void loop()
   int nParams;
   int* params;
   String* command;
-  bool executionError, requestError=false;
+  bool executionError, requestError;
   // Vengono ascoltati nuovi client
   EthernetClient client = server.available();
   if (client) 
@@ -619,6 +619,8 @@ void loop()
     // Finisce una richiesta HTTP
     boolean currentLineIsBlank = true;
     request ="";
+    executionError=false;
+    requestError=false;
     //mentre il client è connesso, scarica la richiesta
     while (client.connected()) 
     {
@@ -640,9 +642,11 @@ void loop()
           currentLineIsBlank = false;
         }
       }
-    } 
+    }
     //inizializzo (e quindi faccio il parsing) il messaggio
     Messaggio messaggio(request);
+    Serial.println(*messaggio.returnComando());
+
     //esecuzione pratica dell'azione richiesta 
     if ((*(messaggio.returnComando()))=="switch")
       executionError=db.cambiaStatoLed((messaggio.returnParams())[0]);
@@ -698,23 +702,33 @@ void loop()
     //se il comando ricevuto non è nessuno dei precedenti
     else
     {
-      requestError==true;
+      requestError=true;
     }
     //invio la risposta
-    if (requestError)
+    if (requestError)//errore nella formulazione della richiesta
     {
-      client.println("HTTP/1.1 400 Bad Request");  
+      client.println("HTTP/1.1 400 Bad Request");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("Parametri richiesta errati");
     }
-    else if (executionError)
+    else if (executionError)//errore nell'esecuzione della richiesta
     {
-      client.println("HTTP/1.1 500 Internal Server Error");  
+      client.println("HTTP/1.1 500 Internal Server Error");
+      //client.println("Content-Type: text/html");
+      client.println();
+      //client.println("Errore interno, impossibile portare a termine l'operazione");
     }
-    else 
+    else
     {
-      client.println("HTTP/1.1 200 OK");  
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/html");
+      client.println();
+      client.println("Operazione eseguita");
     }
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
   }
   db.executeTimingFunctions();
+}
