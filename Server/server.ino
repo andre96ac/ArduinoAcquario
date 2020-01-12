@@ -443,7 +443,7 @@ class Database
       return error;      
     };
 
-    void removeLed(int pin)
+    bool removeLed(int pin)
     {
       bool error=false;
       int posizione=ledPosition(pin);
@@ -474,7 +474,7 @@ class Database
       return error;
     };
 
-    void addController(int id, int pin1, int pin2, int secondi)
+    bool addController(int id, int pin1, int pin2, int secondi)
     {
       bool errore=false;
       //trovo il primo spazio nell'array di controllers
@@ -585,7 +585,8 @@ class Database
 
 Database db;
 
-void setup() {
+void setup() 
+{
   Wire.begin();
   //inizializzo l'orologio
   orologio.begin();
@@ -660,13 +661,13 @@ void loop()
     }
     else if ((*(messaggio.returnComando()))=="changecontrollerstate")
     {
-      executionError=db.changeControllerState(messaggio.returnParams()[0]);
+      db.changeControllerState(messaggio.returnParams()[0]);//manca gestione errore
     } 
     else if ((*(messaggio.returnComando()))=="removecontroller")
-      db.deletController(messaggio.returnParams()[0]);
+      db.deletController(messaggio.returnParams()[0]);//manca gestione errori
     else if ((*(messaggio.returnComando()))=="addtemporizzatore")
     {
-        db.addTemporizzatore(
+        db.addTemporizzatore(//manca gestione errori
         ((messaggio.returnParams())[0]),
         ((messaggio.returnParams())[1]),
         ((messaggio.returnParams())[2]),
@@ -676,11 +677,11 @@ void loop()
       );
     }
     else if ((*(messaggio.returnComando()))=="changetemporizzatorestate")
-      db.changeStateTemporizzatore(messaggio.returnParams()[0]);
+      db.changeStateTemporizzatore(messaggio.returnParams()[0]);//manca gestione errori
     //
     else if (*(messaggio.returnComando())=="resettemporizzatore")
     {
-      db.resetTemporizzatore(
+      db.resetTemporizzatore(//manca gestione errori
         ((messaggio.returnParams())[0]),
         ((messaggio.returnParams())[1]),
         ((messaggio.returnParams())[2]),
@@ -690,7 +691,7 @@ void loop()
     }
     else if (*(messaggio.returnComando())=="removetemporizzatore")
     {
-      db.deleteTemporizzatore(
+      db.deleteTemporizzatore(//manca gestione errori
         ((messaggio.returnParams())[0])
       );
     }
