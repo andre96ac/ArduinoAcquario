@@ -1,0 +1,15 @@
+?switch&pin                                             cambia stato ad un dispositivo
+?addled&pin                                             aggiungi un dispositivo
+?removeled&pin                                          rimuove il dispositivo collegato al pin scelto
+?addcontroller&id&pinled1&pinled2&millisecondi          crea un nuovo controller 
+?changecontrollerstate&id                               cambia di stato un controller
+?removecontroller&id                                     rimuove il controller con id passato
+?addtemporizzatore&id&pin&oraAcc&minAcc&oraSpe&minSpe
+?changetemporizzatorestate&id
+?resettemporizzatore&id&oraAcc&minAcc&oraSpe&minSpe
+?removetemporizzatore&id
+
+
+
+
+
