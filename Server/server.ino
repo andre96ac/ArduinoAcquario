@@ -224,10 +224,11 @@ class Database
     {
     };
 
-    //ritrona la posizione di un led con uno specifico pin all'interno del vettore di led
+    //ritrona la posizione di un led con uno specifico pin all'interno del vettore di led,
+    //se il led non c'è, ritorna -1
     int ledPosition(int pin)
     {
-      int i;
+      int i=-1;
       for (i=0; i<NMAXLED; i++)
       {
         if (leds[i]->returnPin()==pin)
@@ -236,8 +237,9 @@ class Database
       return i;
     }
 
-    void addLed (int pin)
+    bool addLed (int pin)
     {
+      bool error=false
       //se il pin è libero
       if (dPinsBusy[pin]==false)
       {
@@ -255,25 +257,47 @@ class Database
           }
         }
       }
+      else
+      {
+        error=true;
+      }
+      return error;      
     };
 
     void removeLed(int pin)
     {
+      bool error=false;
       int posizione=ledPosition(pin);
-      leds[posizione]->spegni();
-      delete leds[posizione];
-      dPinsBusy[pin]=false;
+      if (posizione<0)
+        error=true;
+      else
+      {
+        leds[posizione]->spegni();
+        delete leds[posizione];
+        dPinsBusy[pin]=false;
+      }
+      return error;      
     };
 
-    void cambiaStatoLed(int pin)
+    bool cambiaStatoLed(int pin)
     {
+      bool error=false;
       int posizione=ledPosition(pin);
-      if (leds[posizione]->isBusy()==false)
-        leds[posizione]->cambiaStato();
+      if (posizione<0)
+        error=true;
+      else
+      {
+        if (leds[posizione]->isBusy()==true)
+          error=true;
+        else
+          leds[posizione]->cambiaStato();
+      }
+      return error;
     };
 
     void addController(int id, int pin1, int pin2, int secondi)
     {
+      bool errore=false;
       //trovo il primo spazio nell'array di controllers
       for (int i=0; i<NMAXCONTROLLERS;i++)
       {
@@ -281,13 +305,21 @@ class Database
         {
           //creo il nuovo controller nello spazio vuoto trovato
           controllers[i]= new LedController(id);
-          //setto i led passando l'indirizzo dell elemento alla posizione trovata da ledPosition()
-          controllers[i]->setLeds((leds[ledPosition(pin1)]),(leds[ledPosition(pin2)]));
-          //setto il tempo sulla base del parametro
-          controllers[i]->setTime(secondi);
+          int posizioneLed1=ledPosition(pin1);
+          int posizioneLed2=ledPosition(pin2);
+          if ((posizioneLed1<0)||(posizioneLed2<0))
+            errore=true;
+          else
+          {        
+            //setto i led passando l'indirizzo dell elemento alla posizione trovata da ledPosition()
+            controllers[i]->setLeds((leds[ledPosition(pin1)]),(leds[ledPosition(pin2)]));
+            //setto il tempo sulla base del parametro
+            controllers[i]->setTime(secondi);
+          }
           break;
         }
       }
+      return errore;
     };
 
     int controllerPosition(int id)
@@ -339,7 +371,7 @@ void loop()
   int nParams;
   int* params;
   String* command;
-
+  bool executionError, requestError=false;
   // Vengono ascoltati nuovi client
   EthernetClient client = server.available();
   if (client) 
@@ -348,6 +380,7 @@ void loop()
     // Finisce una richiesta HTTP
     boolean currentLineIsBlank = true;
     request ="";
+    //mentre il client è connesso, scarica la richiesta
     while (client.connected()) 
     {
       if (client.available()) 
@@ -359,7 +392,6 @@ void loop()
         // Se viene completato l'invio della richiesta HTTP, allora il server invia la risposta
         if (c == '\n' && currentLineIsBlank) 
         { 
-          client.println("HTTP/1.1 200 OK");         
           break;
         }
         if (c == '\n') {
@@ -369,33 +401,51 @@ void loop()
           currentLineIsBlank = false;
         }
       }
+    } 
+    //inizializzo (e quindi faccio il parsing) il messaggio
+    Messaggio messaggio(request);
+    //esecuzione pratica dell'azione richiesta 
+    if ((*(messaggio.returnComando()))=="switch")
+      executionError=db.cambiaStatoLed((messaggio.returnParams())[0]);
+    else if ((*(messaggio.returnComando()))=="addled")
+      executionError=db.addLed((messaggio.returnParams())[0]);
+    else if ((*(messaggio.returnComando()))=="removeled")
+      executionError=db.removeLed((messaggio.returnParams())[0]);
+    else if ((*(messaggio.returnComando()))=="addcontroller")
+    {
+      executionError=db.addController(
+        ((messaggio.returnParams())[0]),
+        ((messaggio.returnParams())[1]),
+        ((messaggio.returnParams())[2]),
+        ((messaggio.returnParams())[3])
+        );
     }
-    delay(1);
+    else if ((*(messaggio.returnComando()))=="changecontrollerstate")
+    {
+      executionError=db.changeControllerState(messaggio.returnParams()[0]);
+    }
+    //se il comando ricevuto non è nessuno dei precedenti
+    else
+    {
+      requestError==true;
+    }
+    //invio la risposta
+    if (requestError)
+    {
+      client.println("HTTP/1.1 400 Bad Request");  
+    }
+    else if (executionError)
+    {
+      client.println("HTTP/1.1 500 Internal Server Error");  
+    }
+    else 
+    {
+      client.println("HTTP/1.1 200 OK");  
+    }
     // Viene chiusta la connessione
     client.stop();
     Serial.println("client disconnected");
   }
-
-  //esecuzione pratica delle azioni 
-  Messaggio messaggio(request);
-  if ((*(messaggio.returnComando()))=="switch")
-    db.cambiaStatoLed((messaggio.returnParams())[0]);
-  else if ((*(messaggio.returnComando()))=="addled")
-    db.addLed((messaggio.returnParams())[0]);
-  else if ((*(messaggio.returnComando()))=="removeled")
-    db.removeLed((messaggio.returnParams())[0]);
-  //mi aspetto un comando "?newcontroller&id&pinled1&pinled2&millisecondi"
-  else if ((*(messaggio.returnComando()))=="addcontroller")
-  {
-    db.addController(
-      ((messaggio.returnParams())[0]),
-      ((messaggio.returnParams())[1]),
-      ((messaggio.returnParams())[2]),
-      ((messaggio.returnParams())[3])
-      );
-  }
-  else if ((*(messaggio.returnComando()))=="changecontrollerstate")
-    db.changeControllerState(messaggio.returnParams()[0]);
   db.executeTimingFunctions();
 }
     
