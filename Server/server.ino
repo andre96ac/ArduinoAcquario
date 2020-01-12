@@ -143,9 +143,9 @@ class Messaggio{
     Messaggio(String messaggio){
       nparams=0;
       messaggio.toCharArray(mex, NMAXPARAMS*3);
-      Serial.println("################ REQUEST ##################")
+      Serial.println("################ REQUEST ##################");
       Serial.println(mex);
-      Serial.println("################ END REQUEST ##################")
+      Serial.println("################ END REQUEST ##################");
       parsedMex=strtok(mex, "?");
       parsedMex=strtok(NULL, "?");
       parsedMex=strtok(parsedMex, "*");
@@ -264,6 +264,7 @@ class Temporizzatore
     DateTime *oraAccensione;
     DateTime *oraSpegnimento;
     bool state;
+    long unsigned int secondiGiornoAccensione, secondiGiornoSpegnimento, secondiGiornoNow;
   public:
     Temporizzatore(int identificativo)
     {
@@ -273,6 +274,7 @@ class Temporizzatore
       oraSpegnimento= new DateTime(0,0,0,0,0,0);
       Serial.println("ho creato il temporizzatore con id");
       Serial.println(id);
+      
     };
 
     int returnId()
@@ -294,6 +296,7 @@ class Temporizzatore
     {
       pL=led;
       Serial.println("ho settato il led");
+      Serial.println(pL->returnPin());
     };
 
     void setAccensione(int ora, int minuti)
@@ -301,23 +304,23 @@ class Temporizzatore
       delete (oraAccensione);
       oraAccensione=new DateTime(0,0,0,ora,minuti,0);
       Serial.println("ho settato l'accensione con orario ");
-      Serial.print(ora);
-      Serial.print(" ");
-      Serial.print(minuti);
-      Serial.println("ho settato l'accensione con orario ");
       Serial.print(oraAccensione->hour());
       Serial.print(" ");
       Serial.print(oraAccensione->minute());
+      //devo anche aggiornare i secondiGiornoAccensione
+      secondiGiornoAccensione=ora*60*60+minuti*60;
     };
 
     void setSpegnimento(int ora, int minuti)
     {
       delete (oraSpegnimento);
       oraSpegnimento=new DateTime(0,0,0,ora,minuti,0);
+
       Serial.println("ho settato lo spegnimento con orario ");
       Serial.print(oraSpegnimento->hour());
       Serial.print(" ");
       Serial.print(oraSpegnimento->minute());
+      secondiGiornoSpegnimento=ora*60*60+minuti*60;
     };
 
     void setState(bool stato)
@@ -326,7 +329,7 @@ class Temporizzatore
       if (state==ACCESO)
       {
         pL->isBusy(true);
-        pL->accendi();
+        pL->spegni();
         Serial.println("ho acceso il temporizzatore");
       }
       else
@@ -350,16 +353,19 @@ class Temporizzatore
 
     void esegui()
     {
+      secondiGiornoNow=(orologio.now().hour()*60*60+orologio.now().minute()*60+orologio.now().second());
+      /* STAMPA ORARI X DEBUG
+      Serial.println(secondiGiornoAccensione);
+      Serial.println(secondiGiornoNow);
+      Serial.println(secondiGiornoSpegnimento);*/
       if (state==ACCESO)
       {
-        if(
-          (orologio.now().hour()>=oraAccensione->hour())
-          &&(orologio.now().minute()>=oraAccensione->minute())
-          &&(orologio.now().hour()<oraSpegnimento->hour())
-          &&(orologio.now().minute()<oraSpegnimento->minute())
-          )
+        if((secondiGiornoNow>=secondiGiornoAccensione)&&(secondiGiornoNow<secondiGiornoSpegnimento))
         {
-          pL->accendi();
+          //accendo solo se effettivamente non è acceso
+          if(pL->returnStato()!=ACCESO)
+            pL->accendi();
+          //
         }
         else
         {
@@ -367,6 +373,7 @@ class Temporizzatore
         }
       }
     };
+    
 };
 
 class Database
@@ -483,9 +490,6 @@ class Database
         {
           
           temporizzatori[i] = new Temporizzatore(id);
-          Serial.println("sto per aggiungere");
-          Serial.println(minutiSpegnimento);
-          //Serial.print(temporizzatori[i]->id);
           temporizzatori[i]->setLed(leds[ledPosition(pin)]);
           temporizzatori[i]->setAccensione(oraAccensione,minutiAccensione);
           temporizzatori[i]->setSpegnimento(oraSpegnimento, minutiSpegnimento);
@@ -545,6 +549,9 @@ void setup() {
   Wire.begin();
   //inizializzo l'orologio
   orologio.begin();
+  //avvisami se l'orologio non sta funzionando
+  if (! orologio.isrunning()) 
+    Serial.println("RTC is NOT running!");
   //setto l'orologio all'ora di compilazione
   orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
   Serial.begin(9600);
@@ -582,7 +589,6 @@ void loop()
         // Se viene completato l'invio della richiesta HTTP, allora il server invia la risposta
         if (c == '\n' && currentLineIsBlank) 
         { 
-          client.println("HTTP/1.1 200 OK");         
           break;
         }
         if (c == '\n') {
@@ -593,6 +599,8 @@ void loop()
         }
       }
     }
+    client.println("HTTP/1.1 200 OK");         
+
     delay(1);
     // Viene chiusta la connessione
     client.stop();
@@ -628,12 +636,22 @@ void loop()
         ((messaggio.returnParams())[2]),
         ((messaggio.returnParams())[3]),
         ((messaggio.returnParams())[4]),
-        ((messaggio.returnParams())[6])
+        ((messaggio.returnParams())[5])
       );
     }
     else if ((*(messaggio.returnComando()))=="changetemporizzatorestate")
       db.changeStateTemporizzatore(messaggio.returnParams()[0]);
     //
+    else if (*(messaggio.returnComando())=="resettemporizzatore")
+    {
+      db.resetTemporizzatore(
+        ((messaggio.returnParams())[0]),
+        ((messaggio.returnParams())[1]),
+        ((messaggio.returnParams())[2]),
+        ((messaggio.returnParams())[3]),
+        ((messaggio.returnParams())[4])
+      );
+    }
   }
 
   db.executeTimingFunctions();
