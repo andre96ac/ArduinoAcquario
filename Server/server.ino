@@ -1,7 +1,9 @@
+#include <ArduinoJson.h>
 #include <RTClib.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <Ethernet.h>
+
 #define ACCESO 1
 #define SPENTO 0
 #define NMAXPARAMS 30
@@ -15,7 +17,14 @@ byte ip[] = {192, 168, 1, 3};
  
 // Viene inizializzata la libreria Ethernet di Arduino e il webserver gira sulla porta 80
 EthernetServer server(80);
- 
+
+int freeRam () 
+{
+extern int __heap_start, *__brkval;
+int v;
+return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
 class Led
 {
     private:
@@ -258,7 +267,16 @@ class LedController
     int returnId()
     {
       return id;
+    };
+    int returnIdLed1()
+    {
+      return pL1->returnPin();
+    };
+    int returnIdLed2()
+    {
+      return pL2->returnPin();
     }
+
 };
 
 class Temporizzatore
@@ -292,6 +310,12 @@ class Temporizzatore
       return id;
     };
 
+    int returnIdLed()
+    {
+      return pL->returnPin();
+    };
+
+
     DateTime returnAccensione()
     {
       return oraAccensione;
@@ -301,6 +325,13 @@ class Temporizzatore
     {
       return oraSpegnimento;
     }
+
+    bool returnState()
+    {
+      return state;
+    }
+
+
 
     void setLed(Led *led)
     {
@@ -393,6 +424,16 @@ class Database
     static const int NDIGITALPIN=14;
     static const int NANALOGPIN=6;
     static const int NMAXCONTROLLERS=5;
+    //questo è il json che contiene i dati da mandare
+    //################################ DA SCOMMENTARE SU NUOVA BOARD ######################
+    /*static const int CONFIGJSONSIZE=(
+                                    JSON_OBJECT_SIZE(4)
+                                    +2*JSON_ARRAY_SIZE(NMAXCONTROLLERS)
+                                    +JSON_ARRAY_SIZE(NMAXLED)
+                                    +NMAXLED*JSON_OBJECT_SIZE(3)
+                                    +NMAXCONTROLLERS*JSON_OBJECT_SIZE(5)
+                                    +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
+                                    );*/
     Led *leds[NMAXLED];
     LedController *controllers[NMAXCONTROLLERS];
     bool dPinsBusy[NDIGITALPIN]={1,1,0,0,0,0,0,0,0,0,1,1,1,1};
@@ -567,6 +608,68 @@ class Database
     {
       temporizzatori[temporizzatorePosition(id)]->changeState();
     }
+
+
+    //############################# FUNZIONE JSON, DA SCOMMENTARE SU NUOVA BOARD #####################
+    /*void sendConfiguration(EthernetClient *client)
+    {
+      //creo il json
+      StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
+      //creo il campo temperatura ed assegno un valore di test
+      jsonDocument["temperatura"]=5;
+      JsonArray jsonLeds=jsonDocument.createNestedArray("leds");
+      JsonArray jsonControllers=jsonDocument.createNestedArray("controllers");
+      JsonArray jsonTemporizzatori=jsonDocument.createNestedArray("temporizzatori");
+      //scorro l'array di led
+      for (int i=0; i<NMAXLED; i++)
+      {
+        //se c'è un led
+        if (leds[i]!=NULL)
+        {
+          //creo l'elemento e lo valorizzo
+          JsonObject jsonLed=jsonLeds.createNestedObject();
+          jsonLed["id"]=leds[i]->returnPin();
+          jsonLed["stato"]=leds[i]->returnStato();
+          jsonLed["busy"]=leds[i]->isBusy();
+        }
+      }
+      //scorro l'array di controllers e temporizzatori
+      for (int i=0; i<NMAXCONTROLLERS; i++)
+      {
+        //se c'è un controller
+        if (controllers[i]!=NULL)
+        {
+          //creo l'oggetto e lo valorizzo
+          JsonObject jsonController=jsonControllers.createNestedObject();
+          jsonController["id"]=controllers[i]->returnId();
+          jsonController["idled1"]=controllers[i]->returnIdLed1();
+          jsonController["idled2"]=controllers[i]->returnIdLed2();
+          jsonController["deltatime"]=controllers[i]->returnTime();
+          jsonController["state"]=controllers[i]->returnState();
+        }
+        //se c'è un temporizzatore
+        if (temporizzatori[i]!=NULL)
+        {
+          //recupero ora e minuti di accensione e spegnimento
+          DateTime acc=temporizzatori[i]->returnAccensione();
+          DateTime spegn=temporizzatori[i]->returnSpegnimento();
+          //creo l'oggetto e lo valorizzo
+          JsonObject jsonTemporizzatore=jsonTemporizzatori.createNestedObject();
+          jsonTemporizzatore["id"]=temporizzatori[i]->returnId();
+          jsonTemporizzatore["idled"]=temporizzatori[i]->returnIdLed();
+          jsonTemporizzatore["hacc"]=acc.hour();
+          jsonTemporizzatore["minacc"]=acc.minute();
+          jsonTemporizzatore["hspegn"]=spegn.hour();
+          jsonTemporizzatore["minspegn"]=spegn.minute();
+          jsonTemporizzatore["state"]=temporizzatori[i]->returnState();
+        }
+      }
+      //ora che il json è pronto, lo spedisco al client
+      serializeJson(jsonDocument, *client);
+      serializeJson(jsonDocument, Serial);
+    };*/
+
+
     void executeTimingFunctions()
     {
       for (int i=0; i<NMAXCONTROLLERS; i++)
@@ -598,8 +701,9 @@ void setup()
   Serial.begin(9600);
   Ethernet.begin(mac, ip);
   server.begin();
-  Serial.print("server is at ");
+  Serial.print(P("server is at "));
   Serial.println(Ethernet.localIP());
+  Serial.println(freeRam());
 
 }
  
@@ -610,7 +714,7 @@ void loop()
   int nParams;
   int* params;
   String* command;
-  bool executionError, requestError;
+  bool executionError, requestError, requestedConfig=false;
   // Vengono ascoltati nuovi client
   EthernetClient client = server.available();
   if (client) 
@@ -630,7 +734,7 @@ void loop()
         if(request.length()<NMAXPARAMS*3){
           request +=c;
         }
-        // Se viene completato l'invio della richiesta HTTP, allora il server invia la risposta
+        // Se viene completato l'invio della richiesta HTTP, allora passo al blocco successivo
         if (c == '\n' && currentLineIsBlank) 
         { 
           break;
@@ -699,6 +803,10 @@ void loop()
         ((messaggio.returnParams())[0])
       );
     }
+    else if(*(messaggio.returnComando())=="getconfig")
+    {
+      requestedConfig=true;
+    }
     //se il comando ricevuto non è nessuno dei precedenti
     else
     {
@@ -719,16 +827,32 @@ void loop()
       client.println();
       //client.println("Errore interno, impossibile portare a termine l'operazione");
     }
-    else
+    else//altrimenti, se è tutto ok
     {
-      client.println("HTTP/1.1 200 OK");
-      client.println("Content-Type: text/html");
-      client.println();
-      client.println("Operazione eseguita");
+      //se è stata richiesta la configurazione
+      if (requestedConfig)
+      {
+        //mando risposta OK
+        client.println("HTTP/1.1 200 OK");
+        client.println("Content-Type: application/json");
+        client.println(); 
+        //mando il json
+        //################################ SCOMMENTARE SU NUOVA BOARD ##########################
+        //db.sendConfiguration(&client);
+        requestedConfig=false;
+      }
+      else//altrimenti
+      {
+        //mando solo risposta OK
+        client.println("HTTP/1.1 200 OK");
+        client.println("Content-Type: text/html");
+        client.println(); 
+        client.println("Operazione eseguita");
+      }
     }
     // Viene chiusta la connessione
     client.stop();
-    Serial.println("client disconnected");
+    Serial.println(P("client disconnected"));
   }
   db.executeTimingFunctions();
 }
