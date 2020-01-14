@@ -97,7 +97,7 @@ class Messaggio2
       String strPar;
       nparams=0;
       mex=messaggio;
-      Serial.println("messaggio completo");
+      Serial.println(F("messaggio completo"));
       Serial.println(mex);
       id1=mex.indexOf('?');
       if ((mex.indexOf('&', id1+1))>=0) 
@@ -152,9 +152,9 @@ class Messaggio{
     Messaggio(String messaggio){
       nparams=0;
       messaggio.toCharArray(mex, NMAXPARAMS*3);
-      Serial.println("################ REQUEST ##################");
+      Serial.println(F("################ REQUEST ##################"));
       Serial.println(mex);
-      Serial.println("################ END REQUEST ##################");
+      Serial.println(F("################ END REQUEST ##################"));
       parsedMex=strtok(mex, "?");
       parsedMex=strtok(NULL, "?");
       parsedMex=strtok(parsedMex, "*");
@@ -295,7 +295,7 @@ class Temporizzatore
       state=SPENTO;
       oraAccensione= new DateTime(0,0,0,0,0,0);
       oraSpegnimento= new DateTime(0,0,0,0,0,0);
-      Serial.println("ho creato il temporizzatore con id");
+      Serial.println(F("ho creato il temporizzatore con id"));
       Serial.println(id);
       
     };
@@ -336,7 +336,7 @@ class Temporizzatore
     void setLed(Led *led)
     {
       pL=led;
-      Serial.println("ho settato il led");
+      Serial.println(F("ho settato il led"));
       Serial.println(pL->returnPin());
     };
 
@@ -344,9 +344,9 @@ class Temporizzatore
     {
       delete (oraAccensione);
       oraAccensione=new DateTime(0,0,0,ora,minuti,0);
-      Serial.println("ho settato l'accensione con orario ");
+      Serial.println(F("ho settato l'accensione con orario "));
       Serial.print(oraAccensione->hour());
-      Serial.print(" ");
+      Serial.print(F(" "));
       Serial.print(oraAccensione->minute());
       //devo anche aggiornare i secondiGiornoAccensione
       secondiGiornoAccensione=ora*60*60+minuti*60;
@@ -357,9 +357,9 @@ class Temporizzatore
       delete (oraSpegnimento);
       oraSpegnimento=new DateTime(0,0,0,ora,minuti,0);
 
-      Serial.println("ho settato lo spegnimento con orario ");
+      Serial.println(F("ho settato lo spegnimento con orario "));
       Serial.print(oraSpegnimento->hour());
-      Serial.print(" ");
+      Serial.print(F(" "));
       Serial.print(oraSpegnimento->minute());
       secondiGiornoSpegnimento=ora*60*60+minuti*60;
     };
@@ -371,13 +371,13 @@ class Temporizzatore
       {
         pL->isBusy(true);
         pL->spegni();
-        Serial.println("ho acceso il temporizzatore");
+        Serial.println(F("ho acceso il temporizzatore"));
       }
       else
       {
         pL->isBusy(false);
         pL->spegni();
-        Serial.println("ho spento il temporizzatore");
+        Serial.println(F("ho spento il temporizzatore"));
       }
     };
 
@@ -695,13 +695,13 @@ void setup()
   orologio.begin();
   //avvisami se l'orologio non sta funzionando
   if (! orologio.isrunning()) 
-    Serial.println("RTC is NOT running!");
+    Serial.println(F("RTC is NOT running!"));
   //setto l'orologio all'ora di compilazione
   orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
   Serial.begin(9600);
   Ethernet.begin(mac, ip);
   server.begin();
-  Serial.print(P("server is at "));
+  Serial.print(F("server is at "));
   Serial.println(Ethernet.localIP());
   Serial.println(freeRam());
 
@@ -719,7 +719,7 @@ void loop()
   EthernetClient client = server.available();
   if (client) 
   {
-    Serial.println("new client");
+    Serial.println(F("new client"));
     // Finisce una richiesta HTTP
     boolean currentLineIsBlank = true;
     request ="";
@@ -815,17 +815,17 @@ void loop()
     //invio la risposta
     if (requestError)//errore nella formulazione della richiesta
     {
-      client.println("HTTP/1.1 400 Bad Request");
-      client.println("Content-Type: text/html");
+      client.println(F("HTTP/1.1 400 Bad Request"));
+      client.println(F("Content-Type: text/html"));
       client.println();
-      client.println("Parametri richiesta errati");
+      client.println(F("Parametri richiesta errati"));
     }
     else if (executionError)//errore nell'esecuzione della richiesta
     {
-      client.println("HTTP/1.1 500 Internal Server Error");
-      //client.println("Content-Type: text/html");
+      client.println(F("HTTP/1.1 500 Internal Server Error"));
+      client.println(F("Content-Type: text/html"));
       client.println();
-      //client.println("Errore interno, impossibile portare a termine l'operazione");
+      client.println(F("Errore interno, impossibile portare a termine l'operazione"));
     }
     else//altrimenti, se è tutto ok
     {
@@ -833,8 +833,8 @@ void loop()
       if (requestedConfig)
       {
         //mando risposta OK
-        client.println("HTTP/1.1 200 OK");
-        client.println("Content-Type: application/json");
+        client.println(F("HTTP/1.1 200 OK"));
+        client.println(F("Content-Type: application/json"));
         client.println(); 
         //mando il json
         //################################ SCOMMENTARE SU NUOVA BOARD ##########################
@@ -844,15 +844,15 @@ void loop()
       else//altrimenti
       {
         //mando solo risposta OK
-        client.println("HTTP/1.1 200 OK");
-        client.println("Content-Type: text/html");
+        client.println(F("HTTP/1.1 200 OK"));
+        client.println(F("Content-Type: text/html"));
         client.println(); 
-        client.println("Operazione eseguita");
+        client.println(F("Operazione eseguita"));
       }
     }
     // Viene chiusta la connessione
     client.stop();
-    Serial.println(P("client disconnected"));
+    Serial.println(F("client disconnected"));
   }
   db.executeTimingFunctions();
 }
