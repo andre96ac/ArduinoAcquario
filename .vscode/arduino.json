@@ -1,5 +1,5 @@
 {
-    "sketch": "Server\\src\\osmo.ino",
+    "sketch": "Server\\src\\server.ino",
     "board": "arduino:avr:uno",
     "port": "COM4"
 }
