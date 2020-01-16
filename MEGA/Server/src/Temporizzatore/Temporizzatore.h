@@ -19,8 +19,8 @@ class Temporizzatore
     ~Temporizzatore();
     int returnId();
     int returnIdLed();
-    DateTime returnAccensione();
-    DateTime returnSpegnimento();
+    DateTime *returnAccensione();
+    DateTime *returnSpegnimento();
     bool returnState();
     void setLed(Led *led);
     void setAccensione(int ora, int minuti);

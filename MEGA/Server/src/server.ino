@@ -21,23 +21,30 @@ byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 byte ip[] = {192, 168, 1, 3};
  
 // Viene inizializzata la libreria Ethernet di Arduino e il webserver gira sulla porta 80
-EthernetServer server(80);
+EthernetServer server(PORT);
 
 Database db(&orologio);
 
 void setup() 
 {
+  Serial.begin(9600);
   Wire.begin();
   //inizializzo l'orologio
   //avvisami se non c'è l'orologio, altrimenti inizializzalo
-
     orologio.begin();
   //avvisami se l'orologio non sta funzionando
   if (! orologio.isrunning()) 
+  {
     Serial.println(F("RTC is NOT running!"));
+  }
   //setto l'orologio all'ora di compilazione
   orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  Serial.begin(9600);
+  Serial.print("Clock set at: ");
+  Serial.print(orologio.now().hour());
+  Serial.print(" ");
+  Serial.print(orologio.now().minute());
+  Serial.print(" ");
+  Serial.println(orologio.now().minute());
   Ethernet.begin(mac, ip);
   server.begin();
   Serial.print(F("server is at "));
@@ -48,11 +55,6 @@ void setup()
  
 void loop() 
 {
-  Serial.print(orologio.now().hour());
-  Serial.print(" ");
-  Serial.print(orologio.now().minute());
-  Serial.print(" ");
-  Serial.println(orologio.now().minute());
 
   char c;
   String request; 

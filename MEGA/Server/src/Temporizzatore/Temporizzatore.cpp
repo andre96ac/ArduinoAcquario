@@ -29,12 +29,12 @@ int Temporizzatore::returnIdLed()
 };
 
 
-DateTime Temporizzatore::returnAccensione()
+DateTime *Temporizzatore::returnAccensione()
 {
     return oraAccensione;
 };
 
-DateTime Temporizzatore::returnSpegnimento()
+DateTime *Temporizzatore::returnSpegnimento()
 {
     return oraSpegnimento;
 }

@@ -1,6 +1,6 @@
 #include "CommonFunc.h"
 
-freeRam () 
+int freeRam () 
 {
   extern int __heap_start, *__brkval;
   int v;

@@ -4,16 +4,7 @@
 
 #include "../Const/Const.h"
 
-    //questo è il json che contiene i dati da mandare
-    //################################ DA SCOMMENTARE SU NUOVA BOARD ######################
-    /*static const int CONFIGJSONSIZE=(
-                                    JSON_OBJECT_SIZE(4)
-                                    +2*JSON_ARRAY_SIZE(NMAXCONTROLLERS)
-                                    +JSON_ARRAY_SIZE(NMAXLED)
-                                    +NMAXLED*JSON_OBJECT_SIZE(3)
-                                    +NMAXCONTROLLERS*JSON_OBJECT_SIZE(5)
-                                    +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
-                                    );*/
+    
     Database::Database (RTC_DS1307 *clock)
     {
         dPinsBusy[0]=1;
@@ -201,7 +192,7 @@
 
 
     //############################# FUNZIONE JSON, DA SCOMMENTARE SU NUOVA BOARD #####################
-    /*void sendConfiguration(EthernetClient *client)
+    void Database::sendConfiguration(EthernetClient *client)
     {
       //creo il json
       StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
@@ -241,23 +232,23 @@
         if (temporizzatori[i]!=NULL)
         {
           //recupero ora e minuti di accensione e spegnimento
-          DateTime acc=temporizzatori[i]->returnAccensione();
-          DateTime spegn=temporizzatori[i]->returnSpegnimento();
+          DateTime *acc=temporizzatori[i]->returnAccensione();
+          DateTime *spegn=temporizzatori[i]->returnSpegnimento();
           //creo l'oggetto e lo valorizzo
           JsonObject jsonTemporizzatore=jsonTemporizzatori.createNestedObject();
           jsonTemporizzatore["id"]=temporizzatori[i]->returnId();
           jsonTemporizzatore["idled"]=temporizzatori[i]->returnIdLed();
-          jsonTemporizzatore["hacc"]=acc.hour();
-          jsonTemporizzatore["minacc"]=acc.minute();
-          jsonTemporizzatore["hspegn"]=spegn.hour();
-          jsonTemporizzatore["minspegn"]=spegn.minute();
+          jsonTemporizzatore["hacc"]=acc->hour();
+          jsonTemporizzatore["minacc"]=acc->minute();
+          jsonTemporizzatore["hspegn"]=spegn->hour();
+          jsonTemporizzatore["minspegn"]=spegn->minute();
           jsonTemporizzatore["state"]=temporizzatori[i]->returnState();
         }
       }
       //ora che il json è pronto, lo spedisco al client
       serializeJson(jsonDocument, *client);
       serializeJson(jsonDocument, Serial);
-    };*/
+    };
 
 
     void Database::executeTimingFunctions()
