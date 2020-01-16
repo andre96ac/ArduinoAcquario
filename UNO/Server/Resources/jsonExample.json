@@ -1,0 +1,168 @@
+/*
+   JSON_OBJECT_SIZE(4)          Un oggetto da 4 elementi (il principale)
+ + 2*JSON_ARRAY_SIZE(6)         due array da 6 oggetti (gli array di controllers)
+ + JSON_ARRAY_SIZE(10)          un array da 10 elementi (l'array di led)
+ + 10*JSON_OBJECT_SIZE(3)       dieci oggetti da 3 elementi (i 3 led)
+ + 6*JSON_OBJECT_SIZE(5)        sei oggetti da 5 elementi (i sei controller)
+ + 6*JSON_OBJECT_SIZE(7)        sei oggetti da 7 elementi (i sei temporizzatori)
+*/
+
+
+
+{
+    "leds": [
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        },
+        {
+            "id":"5",
+            "stato":"0",
+            "busy":"0"
+        }
+    ],
+    "controllers": [
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        },
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        },
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        },
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        },
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        },
+        {
+            "id":"5",
+            "idled1":"8",
+            "idled2":"4",
+            "millis":"2500",
+            "stato":"1"
+        }
+    ],
+    "temporizzatori": [ 
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        },
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        },
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        },
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        },
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        },
+        {
+            "id":"5",
+            "idled": "3",
+            "oraacc":"12",
+            "minacc":"45",
+            "oraspegn":"12",
+            "minspegn":"45",
+            "stato":"0"
+        }
+     ],
+
+    "temperatura":"40"
+  
+  }
