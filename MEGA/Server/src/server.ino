@@ -1,3 +1,4 @@
+
 #include <RTClib.h>
 #include <ArduinoJson.h>
 #include <Wire.h>
@@ -12,6 +13,7 @@
 #include "./LedController/LedController.cpp"
 #include "./Temporizzatore/Temporizzatore.cpp"
 #include "./Database/Database.cpp"
+#include "./Termometro/Termometro.cpp"
 
 
 //creo l'orologio
@@ -27,30 +29,31 @@ Database db(&orologio);
 
 void setup() 
 {
+  //effettue le inizializzazioni
   Serial.begin(9600);
   Wire.begin();
-  //inizializzo l'orologio
-  //avvisami se non c'è l'orologio, altrimenti inizializzalo
-    orologio.begin();
+  orologio.begin();
+  Ethernet.begin(mac, ip);
+  server.begin();
+
   //avvisami se l'orologio non sta funzionando
   if (! orologio.isrunning()) 
   {
     Serial.println(F("RTC is NOT running!"));
   }
+
   //setto l'orologio all'ora di compilazione
   orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
   Serial.print("Clock set at: ");
   Serial.print(orologio.now().hour());
-  Serial.print(" ");
+  Serial.print(":");
   Serial.print(orologio.now().minute());
-  Serial.print(" ");
+  Serial.print(":");
   Serial.println(orologio.now().minute());
-  Ethernet.begin(mac, ip);
-  server.begin();
-  Serial.print(F("server is at "));
+  Serial.print(F("Server is at "));
   Serial.println(Ethernet.localIP());
+  Serial.print(F("Free RAM at start: "));
   Serial.println(freeRam());
-
 }
  
 void loop() 
@@ -102,7 +105,10 @@ void loop()
     if ((*(messaggio.returnComando()))=="switch")
       executionError=db.cambiaStatoLed((messaggio.returnParams())[0]);
     else if ((*(messaggio.returnComando()))=="addled")
-      executionError=db.addLed((messaggio.returnParams())[0]);
+      executionError=db.addLed(
+        (messaggio.returnParams())[0],
+        (messaggio.returnParams())[1]
+        );
     else if ((*(messaggio.returnComando()))=="removeled")
       executionError=db.removeLed((messaggio.returnParams())[0]);
     else if ((*(messaggio.returnComando()))=="addcontroller")
@@ -119,7 +125,7 @@ void loop()
       db.changeControllerState(messaggio.returnParams()[0]);//manca gestione errore
     } 
     else if ((*(messaggio.returnComando()))=="removecontroller")
-      db.deletController(messaggio.returnParams()[0]);//manca gestione errori
+      executionError=db.deletController(messaggio.returnParams()[0]);//manca gestione errori
     else if ((*(messaggio.returnComando()))=="addtemporizzatore")
     {
         db.addTemporizzatore(//manca gestione errori
@@ -136,7 +142,7 @@ void loop()
     //
     else if (*(messaggio.returnComando())=="resettemporizzatore")
     {
-      db.resetTemporizzatore(//manca gestione errori
+      executionError=db.resetTemporizzatore(//manca gestione errori
         ((messaggio.returnParams())[0]),
         ((messaggio.returnParams())[1]),
         ((messaggio.returnParams())[2]),
@@ -146,10 +152,48 @@ void loop()
     }
     else if (*(messaggio.returnComando())=="removetemporizzatore")
     {
-      db.deleteTemporizzatore(//manca gestione errori
+      executionError=db.deleteTemporizzatore(//manca gestione errori
         ((messaggio.returnParams())[0])
       );
     }
+    else if (*(messaggio.returnComando())=="addtermometro")
+    {
+      if (messaggio.returnNParams()==2)
+      {
+        executionError=db.addTermometro(
+          ((messaggio.returnParams())[0]),
+          ((messaggio.returnParams())[1])
+        );
+      }
+      else if(messaggio.returnNParams()==4)
+      {
+        executionError=db.addTermometro(
+          ((messaggio.returnParams())[0]),
+          ((messaggio.returnParams())[1]),
+          ((messaggio.returnParams())[2]),
+          ((messaggio.returnParams())[3])
+        );
+      }
+      else if(messaggio.returnNParams()==6)
+      {
+        executionError=db.addTermometro(
+          ((messaggio.returnParams())[0]),
+          ((messaggio.returnParams())[1]),
+          ((messaggio.returnParams())[2]),
+          ((messaggio.returnParams())[3]),
+          ((messaggio.returnParams())[4]),
+          ((messaggio.returnParams())[5])
+        );
+      }
+    }
+    else if (*(messaggio.returnComando())=="changetermometrostate")
+    {
+      executionError= db.changeTermometroState(
+        (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="removetermometro")
+      executionError=db.deleteTermometro(      messaggio.returnParams()[0]    );
     else if(*(messaggio.returnComando())=="getconfig")
     {
       requestedConfig=true;
@@ -184,7 +228,6 @@ void loop()
         client.println(F("Content-Type: application/json"));
         client.println(); 
         //mando il json
-        //################################ SCOMMENTARE SU NUOVA BOARD ##########################
         db.sendConfiguration(&client);
         requestedConfig=false;
       }

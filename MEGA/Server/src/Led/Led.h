@@ -7,8 +7,9 @@ class Led
       bool stato;
       int pin;
       bool busy;
+      int type;
     public:
-      Led(int nPin);
+      Led(int nPin, int tipo);
       bool isBusy(void);      
       void isBusy(bool scelta);
       void accendi(void);

@@ -1,14 +1,15 @@
 #include "led.h"
 #include "../Const/Const.h"
 
-      Led::Led(int nPin)
+      Led::Led(int nPin, int tipo)
       {
+        type=tipo;
         stato=SPENTO;
         busy=false;
         pin=nPin;
         pinMode(pin, OUTPUT);
       }
-
+     
       bool Led::isBusy()
       {
         return busy;
