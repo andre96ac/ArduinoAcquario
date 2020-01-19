@@ -121,7 +121,7 @@ int Termometro::getDelta()
     return delta;
 }
 
-void Termometro::esegui() //FIXME #############################
+void Termometro::esegui() 
 {
     readSensor();
     Serial.println(temperature);
