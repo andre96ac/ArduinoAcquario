@@ -8,7 +8,7 @@
 #define NDIGITALPIN 14
 #define NANALOGPIN 6
 #define NMAXCONTROLLERS 5
-#define PORT 80
+#define PORT 11111
 #define TERMOMETRO 0
 #define TERMOSTATO 1
 #define CLIMA 2
