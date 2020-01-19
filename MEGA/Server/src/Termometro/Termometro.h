@@ -17,7 +17,6 @@ class Termometro
         int type;
         int settedTemperature;
         int delta;
-        OneWire ds(thermPin);//#########################################################
 
     public:
         Termometro(int identificativo, int pinTermometro, Led* riscaldatore, int temperatura);

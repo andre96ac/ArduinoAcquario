@@ -121,7 +121,7 @@ int Termometro::getDelta()
     return delta;
 }
 
-void Termometro::esegui()
+void Termometro::esegui() //FIXME #############################
 {
     readSensor();
     Serial.println(temperature);
@@ -153,27 +153,29 @@ void Termometro::esegui()
     }
 };
 
-void Termometro::readSensor()//##########################################################
+void Termometro::readSensor()//TODO ##########################################################
 {
   //returns the temperature from one DS18B20 in DEG Celsius
  
   byte data[12];
   byte addr[8];
+  OneWire ds(thermPin);
+
  
   if ( !ds.search(addr)) {
       //no more sensors on chain, reset search
       ds.reset_search();
-      return -1000;
+      return;
   }
  
   if ( OneWire::crc8( addr, 7) != addr[7]) {
-      Serial.println("CRC is not valid!");
-      return -1000;
+      Serial.println(F("CRC is not valid!"));
+      return;
   }
  
   if ( addr[0] != 0x10 && addr[0] != 0x28) {
-      Serial.print("Device is not recognized");
-      return -1000;
+      Serial.print(F("Device is not recognized"));
+      return;
   }
  
   ds.reset();
