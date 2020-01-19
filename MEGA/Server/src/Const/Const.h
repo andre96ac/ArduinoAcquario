@@ -9,9 +9,11 @@
 #define NANALOGPIN 6
 #define NMAXCONTROLLERS 5
 #define PORT 11111
-#define TERMOMETRO 0
-#define TERMOSTATO 1
-#define CLIMA 2
+
+enum {TERMOMETRO, TERMOSTATO, CLIMA};
+
+
+
 
 const int CONFIGJSONSIZE=(
                             JSON_OBJECT_SIZE(4)

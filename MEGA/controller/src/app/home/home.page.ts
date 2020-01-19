@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpConnectionService } from '../servizi/http-connection.service'
-import { stringify } from 'querystring';
 
 @Component({
   selector: 'app-home',
@@ -9,27 +7,6 @@ import { stringify } from 'querystring';
 })
 export class HomePage {
 
-  constructor(private httpConnectionService : HttpConnectionService) {};
-  btnLed1()
-  {
-    let risposta;
+  constructor() {}
 
-    this.httpConnectionService.sendCommand('?command=switch&id=1').subscribe( (risposta) =>
-    {
-      console.log(risposta);
-    }
-    );
-    
-  };
-  btnLed2()
-  {
-    let risposta;
-
-    this.httpConnectionService.sendCommand('?command=switch&id=2').subscribe( (risposta) =>
-    {
-      console.log(risposta);
-    }
-    );
-    
-  }
 }
