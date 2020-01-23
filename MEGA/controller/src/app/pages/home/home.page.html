@@ -5,6 +5,59 @@
 </ion-header>
 
 <ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col sizeXs=6 sizeSm=4>
+        <ion-card class="ion-text-center card-disp">
+          <ion-card-header>
+            <i class="fas fa-plug"></i>
+          </ion-card-header >
+          <ion-card-content>
+            <ion-button [color]="this.acceso? 'success':'danger'" fill="outline"   slot="icon-only" (click)="onChangestate()">
+              <ion-icon name="power"   ></ion-icon>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col sizeXs=6 sizeSm=4>
+        <ion-card class="ion-text-center card-disp">
+          <ion-card-header>
+            <ion-icon name="outlet" color="light"></ion-icon>
+          </ion-card-header >
+          <ion-card-content>
+            <ion-button [color]="this.acceso? 'success':'danger'"    slot="icon-only" (click)="onChangestate()">
+              <ion-icon name="power"   ></ion-icon>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col sizeXs=6 sizeSm=4>
+        <ion-card class="ion-text-center card-disp">
+          <ion-card-header>
+            <i class="far fa-lightbulb"></i>
+          </ion-card-header >
+          <ion-card-content>
+            <ion-button [color]="this.acceso? 'success':'danger'" fill="outline"   slot="icon-only" (click)="onChangestate()">
+              <ion-icon name="power"   ></ion-icon>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col sizeXs=6 sizeSm=4>
+        <ion-card class="ion-text-center card-disp">
+          <ion-card-header>
+            <ion-icon name="outlet" color="light" ></ion-icon>
+          </ion-card-header >
+          <ion-card-content>
+            <ion-button [color]="this.acceso? 'success':'danger'" fill="outline"   slot="icon-only" (click)="onChangestate()">
+              <ion-icon name="power"   ></ion-icon>
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   <ion-button (click)="getconfig()">
     <ion-icon name="sync"></ion-icon>
   </ion-button>

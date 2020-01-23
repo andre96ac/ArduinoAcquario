@@ -8,6 +8,8 @@ import { DataService } from '../../services/data.service'
 })
 export class HomePage implements OnInit {
 
+  acceso=true;
+
   constructor(private dataService:DataService) { }
 
   ngOnInit() {
@@ -20,8 +22,14 @@ export class HomePage implements OnInit {
   addLed()
   {
     let response: string;
-    response=this.dataService.addLed(5);
-    console.log(response);
+    //this.dataService.addLed(5);
+    this.dataService.addLed(5);
+    console.log(this.dataService.error)
+  }
+
+  onChangestate()
+  {
+    this.acceso? this.acceso=false:this.acceso=true;
   }
 
 }

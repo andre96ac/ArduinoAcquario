@@ -1,5 +1,7 @@
 {
   "name": "Controller",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
