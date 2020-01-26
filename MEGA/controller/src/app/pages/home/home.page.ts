@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service'
+import { ConfigModel } from 'src/app/models/config.model';
+import { Subscription } from 'rxjs';
+import { LedModel } from 'src/app/models/led.model';
 
 @Component({
   selector: 'app-home',
@@ -8,28 +11,27 @@ import { DataService } from '../../services/data.service'
 })
 export class HomePage implements OnInit {
 
-  acceso=true;
+  loadedConfig:ConfigModel=new ConfigModel;
+
+  configChanged:Subscription;
 
   constructor(private dataService:DataService) { }
 
   ngOnInit() {
-  }
+    this.configChanged=this.dataService.configChanged.subscribe(data=>{
+      this.loadedConfig=data;
+       //console.log(this.loadedConfig);
+    })
 
-  getconfig()
-  {
     this.dataService.getConfig();
-  }
-  addLed()
-  {
-    let response: string;
-    //this.dataService.addLed(5);
-    this.dataService.addLed(5);
-    console.log(this.dataService.error)
-  }
 
-  onChangestate()
+  }
+ 
+
+  onClickSwitch(id:number)
   {
-    this.acceso? this.acceso=false:this.acceso=true;
+    let response=this.dataService.switch(id);
+    console.log(response)
   }
 
 }

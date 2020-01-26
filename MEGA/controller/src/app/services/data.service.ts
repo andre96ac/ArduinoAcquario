@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { ConfigModel } from '../models/config.model'
 import { LedModel } from '../models/led.model';
 import { ControllerModel } from '../models/controller.model';
 import { TemporizzatoreModel } from '../models/temporizzatore.model';
 import { TermometroModel } from '../models/termometro.model';
+
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs'
+import { Observable, throwError, Subject, config } from 'rxjs'
 import { map, catchError, } from 'rxjs/operators';
 import { Serializer } from '@angular/compiler';
 
@@ -13,16 +15,20 @@ import { Serializer } from '@angular/compiler';
 })
 export class DataService {
 
-  private _leds : LedModel[]=[];
-  private _controllers: ControllerModel[]=[];
+  /*private _controllers: ControllerModel[]=[];
   private _temporizzatori: TemporizzatoreModel[]=[];
-  private _termometri: TermometroModel[]=[];
+  private _termometri: TermometroModel[]=[];*/
+
+  private _config= new ConfigModel;
 
   private _myIp: string='2.238.115.27';
   private _myPort: string ='11111';
   private _myUrl: string=('http://'+this._myIp+':'+this._myPort+'/?')
 
-  public error=false;
+  public configChanged= new Subject<ConfigModel>();
+  public ledsChanged= new Subject<LedModel[]>();
+
+
 
   constructor(private httpClient : HttpClient) { }
 
@@ -31,15 +37,13 @@ export class DataService {
     let request = this._myUrl+'getconfig*'
     this.httpClient.get(request)
       .subscribe(data=>{
-        this._controllers=data['controllers'];
-        this._leds=data['leds'];
-        this._temporizzatori=data['temporizzatori'];
-        this._termometri=data['termometri'];
-        console.log(this._leds);
-        console.log(this._controllers);
-        console.log(this._temporizzatori);
-        console.log(this._termometri);
+        this._config.leds=data['leds'];
+        this._config.controllers=data['controllers'];
+        this._config.temporizzatori=data['temporizzatori'];
+        this._config.termometri=data['termometri'];
+        this.configChanged.next(this._config);
       });
+     
   }
 
   addLed (pin : number)
@@ -48,16 +52,33 @@ export class DataService {
       (this._myUrl+'addled&'+pin+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
-      }).catch()
+      })
       .subscribe(risposta => {
         //console.log(risposta);
         console.log(risposta.status);
         return risposta.status;
       })
       ;
+
+      this.getConfig();
   }
 
-  //Gestisce gli errori di risposta
+  switch (pin: number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'switch&'+pin+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        return (risposta.status)
+      });
+
+      this.getConfig();
+  }
+
+
+ /* //Gestisce gli errori di risposta
   private handleError(error: HttpErrorResponse) {
     if(error.error instanceof ErrorEvent) {
       // Errore di chiamata
@@ -94,7 +115,7 @@ export class DataService {
     .subscribe(result => {
       this.error=false;
     } )
-  }
+  }*/
 
 
 }

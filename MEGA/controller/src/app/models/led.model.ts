@@ -1,5 +1,5 @@
 export class LedModel{
-    pin: number;
+    id: number;
     stato: boolean;
     busy: boolean;
 }
