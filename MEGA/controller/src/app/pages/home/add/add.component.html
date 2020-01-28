@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button> 
+      <ion-title>Scegli la presa</ion-title>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list> 
+      <ion-item *ngFor="let item of dpinBusy; let i=index" (click)="confirm(i)" > 
+        <i class="fas fa-plug" slot="start"></i>
+        <ion-label>{{ i }}</ion-label>
+        <ion-label *ngIf="item"> - In uso</ion-label>
+        <ion-radio [disabled]="item" value=i></ion-radio>
+      </ion-item>
+    </ion-list>
+</ion-content>

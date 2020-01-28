@@ -71,13 +71,29 @@ export class DataService {
         responseType: 'text' as 'json'
       })
       .subscribe(risposta => {
-        return (risposta.status)
+        console.log(risposta.status)
       });
 
       this.getConfig();
   }
 
 
+  removeLed (pin : number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'removeled&'+pin+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        //console.log(risposta);
+        console.log(risposta.status);
+        return risposta.status;
+      })
+      ;
+
+      this.getConfig();
+  }
  /* //Gestisce gli errori di risposta
   private handleError(error: HttpErrorResponse) {
     if(error.error instanceof ErrorEvent) {

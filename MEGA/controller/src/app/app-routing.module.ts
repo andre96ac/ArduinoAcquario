@@ -8,6 +8,10 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
   },
+  {
+    path: 'controllers',
+    loadChildren: () => import('./pages/controllers/controllers.module').then( m => m.ControllersPageModule)
+  },
 ];
 
 @NgModule({

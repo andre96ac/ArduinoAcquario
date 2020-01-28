@@ -37,15 +37,31 @@ ion-content
     background-color: rgb(255,255,255);
     background-color: rgba(32, 0, 146, 0.151);
     box-shadow: none;
+    height: 100%;
 }
 
-.card-disp >ion-card-header>i, .card-disp >ion-card-header>ion-icon
+.card-disp >ion-card-header i, .card-disp >ion-card-header>ion-icon, .card-disp>ion-icon
 {
     font-size: 40px;
     padding: 5px;
+    
+    
+}
+.card-disp ion-label>p
+{
+    font-size: 20px;
+    color: #ffffff;
 }
 
-.card-disp >ion-card-header>i
+.card-disp >ion-card-header i
 {
     color: #ffffff;
 }
+
+.card-add ion-icon
+{
+    font-size: 40px;
+    padding: 5px;
+    color: #ffffff;
+}
+

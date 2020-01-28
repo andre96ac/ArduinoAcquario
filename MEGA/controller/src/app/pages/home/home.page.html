@@ -1,32 +1,69 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>home</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="m1"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestione Dispositivi</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-grid>
-    <ion-row>
-      <ion-col sizeXs=6 sizeSm=4 *ngFor="let item of loadedConfig.leds">
+    <ion-row align-items-stretch>
+      <ion-col offsetXs=1 sizeXs=10 offsetSm=0 sizeSm=6 *ngFor="let item of loadedConfig.leds">
         <ion-card class="ion-text-center card-disp">
           <ion-card-header>
-            <i class="fas fa-plug"></i>
+            <ion-grid>
+              <ion-row align-items-baseline>
+                
+                <ion-col size="3" offset="3">
+                  <i class="fas fa-plug"></i>
+                </ion-col>
+                <ion-col size="3" class="ion-no-padding">
+                  <ion-label>
+                    <p >{{ item.id }}</p>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-card-header >
           <ion-card-content>
-            <p>{{ item.id }}</p>
-            <ion-button [color]="item.stato? 'success':'danger'" fill="outline"   slot="icon-only" (click)="onClickSwitch(item.id)">
-              <ion-icon name="power"   ></ion-icon>
-            </ion-button>
+            <ion-grid>
+              <!-- <ion-row>
+                <ion-col size="6">
+                  <ion-button [color]="item.stato? 'success':'danger'" fill="outline" expand="block" (click)="onClickSwitch(item.id)" >
+                    <ion-icon name="power"></ion-icon>
+                  </ion-button>
+                </ion-col>
+                <ion-col size="3"></ion-col>
+                <ion-col size="3">
+                  <ion-button color=danger fill="outline" (click)="onDeletingLed(item.id)">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row> -->
+              <ion-row align-items-center>
+                <ion-col>
+                  <ion-toggle [checked]="item.stato" [disabled]="item.busy" (ionChange)="onClickSwitch(item.id)"></ion-toggle>
+                </ion-col>
+                <ion-col>
+                  <ion-button (click)="onDeletingLed(item.id)">
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col offsetXs=1 sizeXs=10 offsetSm=0 sizeSm=6 >
+        <ion-card class="ion-text-center card-disp card-add">
+            <ion-button fill="clear" color="light" style="width: 80%; height: 80%; margin:10% ;" (click)="presentModal()">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
 
-  <!-- <ion-button (click)="getconfig()">
-    <ion-icon name="sync"></ion-icon>
-  </ion-button>
-  <ion-button (click)="addLed()">
-    <ion-icon name="add"></ion-icon>
-  </ion-button> -->
 </ion-content>
