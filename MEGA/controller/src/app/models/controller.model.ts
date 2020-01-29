@@ -1,8 +1,8 @@
 export class ControllerModel{
     id: number;
-    idLed1: number;
-    idLed2: number;
-    millisec:number;
-    stato: boolean;
+    idled1: number;
+    idled2: number;
+    deltatime:number;
+    state: boolean;
 
 }

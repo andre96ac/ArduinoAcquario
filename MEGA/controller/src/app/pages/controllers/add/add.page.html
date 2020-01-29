@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Aggiungi Controller</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form">
+    <ion-list>
+        <ion-item>
+          <ion-label position="floating">Identificativo</ion-label>
+          <ion-input type="number"  formControlName="id"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Pin device 1</ion-label>
+          <ion-input type="number"  formControlName="idL1"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Pin device 2</ion-label>
+          <ion-input type="number"  formControlName="idL2"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Intervallo di pulsazione</ion-label>
+          <ion-input type="number"  formControlName="deltaTime"></ion-input>
+        </ion-item>
+      </ion-list>      
+  </form>
+  <ion-button fill="outline" expand="block" [disabled]="!form.valid" (click)="submit()">
+    Conferma
+  </ion-button>
+</ion-content>

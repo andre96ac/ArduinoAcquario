@@ -41,6 +41,7 @@ export class DataService {
         this._config.controllers=data['controllers'];
         this._config.temporizzatori=data['temporizzatori'];
         this._config.termometri=data['termometri'];
+        this._config.dpinbusy=data['dpinbusy'];
         this.configChanged.next(this._config);
       });
      
@@ -94,6 +95,53 @@ export class DataService {
 
       this.getConfig();
   }
+
+  addController(id: number, idL1: number, idL2: number, ms: number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'addcontroller&'+id+'&'+idL1+'&'+idL2+'&'+ms+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status);
+        return risposta.status;
+      })
+      ;
+
+      this.getConfig();
+  }
+
+  changeControllerState (id: number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'changecontrollerstate'+'&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status)
+      });
+
+      this.getConfig();
+  }
+
+  removeController(id:number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'removecontroller'+'&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status)
+      });
+
+      this.getConfig();
+  }
+
+
+
  /* //Gestisce gli errori di risposta
   private handleError(error: HttpErrorResponse) {
     if(error.error instanceof ErrorEvent) {

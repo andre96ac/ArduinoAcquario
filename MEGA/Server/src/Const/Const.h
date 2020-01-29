@@ -16,7 +16,8 @@ enum {TERMOMETRO, TERMOSTATO, CLIMA};
 
 
 const int CONFIGJSONSIZE=(
-                            JSON_OBJECT_SIZE(4)
+                            JSON_OBJECT_SIZE(5)
+                            +JSON_ARRAY_SIZE(NDIGITALPIN)
                             +3*JSON_ARRAY_SIZE(NMAXCONTROLLERS)
                             +JSON_ARRAY_SIZE(NMAXLED)
                             +NMAXLED*JSON_OBJECT_SIZE(3)

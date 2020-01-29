@@ -18,7 +18,7 @@ export class HomePage implements OnInit {
 
   configChanged:Subscription;
 
-  dPinBusy: boolean[];
+  
 
 
 
@@ -33,7 +33,6 @@ export class HomePage implements OnInit {
     this.configChanged=this.dataService.configChanged.subscribe(data=>{
       this.loadedConfig=data;
        //console.log(this.loadedConfig);
-       this.dPinBusy=[false,false,true,true,false,false,false,false,false,false];
     })
 
     this.dataService.getConfig();
@@ -52,13 +51,13 @@ export class HomePage implements OnInit {
 
       const modal = await this.modalCtrl.create({
         component: AddComponent,
-        componentProps: {data:this.dPinBusy}
+        componentProps: {data:this.loadedConfig.dpinbusy}
       });
 
       modal.onWillDismiss()
       .then(data=>{
         let scelta:number=data['data'];
-        if(scelta['data']<=this.dPinBusy.length)
+        if(scelta['data']<=this.loadedConfig.dpinbusy.length)
         {
 
           this.dataService.addLed(scelta['data']);

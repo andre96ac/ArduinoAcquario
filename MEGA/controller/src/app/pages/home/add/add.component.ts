@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 
+
+
+
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',

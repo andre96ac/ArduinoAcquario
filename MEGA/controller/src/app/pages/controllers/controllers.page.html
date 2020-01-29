@@ -8,5 +8,52 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let item of loadedConfig.controllers" offsetXs="1" sizeXs="10"  offsetSm="0" sizeSm="6">
+        <ion-card class="card-disp ">
+            <ion-card-header>
+              <ion-grid>
+                <ion-row align-items-center>
+                  <ion-col size="3" >
+                    <i class="fas fa-gamepad"></i>
+                  </ion-col>
+                  <ion-col size="9" class="ion-no-padding">
+                    <ion-label>
+                      <p >Id: {{ item.id }}</p>
+                      <p>Device 1: {{ item.idled1 }}</p>
+                      <p>Device 2: {{ item.idled2 }}</p>
+                      <p>Millisecondi: {{ item.deltatime }}</p>
+                    </ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header >
+            <ion-card-content>
+              <ion-grid>
+                <ion-row align-items-center>
+                  <ion-col>
+                    <ion-toggle [checked]="item.state"  (ionChange)="onClickSwitch(item.id)" ></ion-toggle>
+                  </ion-col>
+                  <ion-col>
+                    <ion-button (click)="onRemovingController(item.id)" fill="outline" expand="block">
+                      <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col offsetXs="1" sizeXs="10" sizeSm="6">
+        <ion-card button="true" class=" card-disp card-add" (click)="presentModal()">
+          <ion-row class="card" align-items-center>
+            <ion-col class="ion-text-center">
+              <ion-icon name="add"></ion-icon>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

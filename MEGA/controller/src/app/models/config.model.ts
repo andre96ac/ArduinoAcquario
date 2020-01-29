@@ -8,5 +8,6 @@ export class ConfigModel
     leds:LedModel[]=[];
     controllers:ControllerModel[]=[];
     temporizzatori:TemporizzatoreModel[]=[];
-    termometri:TermometroModel[]=[];    
+    termometri:TermometroModel[]=[];  
+    dpinbusy:boolean[]=[];  
 }

@@ -352,9 +352,17 @@
     StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
     //creo il campo temperatura ed assegno un valore di test
     JsonArray jsonLeds=jsonDocument.createNestedArray("leds");
+    JsonArray jsonDPinBusy=jsonDocument.createNestedArray("dpinbusy");
     JsonArray jsonControllers=jsonDocument.createNestedArray("controllers");
     JsonArray jsonTemporizzatori=jsonDocument.createNestedArray("temporizzatori");
     JsonArray jsonTermometri=jsonDocument.createNestedArray("termometri");
+
+    //scorro l'array dpinbusy
+    for (int i=0; i<NDIGITALPIN; i++)
+    {
+       jsonDPinBusy.add(dPinsBusy[i]);
+    }
+
     //scorro l'array di led
     for (int i=0; i<NMAXLED; i++)
     {
