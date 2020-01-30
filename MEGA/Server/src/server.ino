@@ -138,7 +138,7 @@ void loop()
       );
     }
     else if ((*(messaggio.returnComando()))=="changetemporizzatorestate")
-      db.changeStateTemporizzatore(messaggio.returnParams()[0]);//manca gestione errori
+      executionError = db.changeStateTemporizzatore(messaggio.returnParams()[0]);
     //
     else if (*(messaggio.returnComando())=="resettemporizzatore")
     {

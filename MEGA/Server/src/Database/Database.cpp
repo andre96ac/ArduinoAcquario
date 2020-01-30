@@ -168,7 +168,7 @@
     }
     else //altrimenti, se esiste
     {
-      //controlla se i led associati sono occupati
+      //controlla se almeno uno dei led associati è occupato, e se stò cercando di ACCENDERE il controller
       if (((leds[
         ledPosition(controllers[controllerPosition(id)]->returnIdLed1())
         ]->isBusy())
@@ -248,9 +248,26 @@
     
   };
 
-  void Database::changeStateTemporizzatore(int id)
+  bool Database::changeStateTemporizzatore(int id)
   {
-    temporizzatori[temporizzatorePosition(id)]->changeState();
+    bool error =false;
+    if (temporizzatorePosition(id)==-1)
+      error=true;
+    else
+    {
+      if ((leds[ledPosition(temporizzatori[temporizzatorePosition(id)]->returnIdLed())]->isBusy())
+      &&(temporizzatori[temporizzatorePosition(id)]->returnState()==SPENTO))
+      {
+        error=true;
+      }
+      else
+      {
+        temporizzatori[temporizzatorePosition(id)]->changeState();
+      }
+      
+    }
+
+    return error;
   };
 
 

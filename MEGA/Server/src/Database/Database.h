@@ -39,7 +39,7 @@ class Database
 
     void addTemporizzatore(int id, int pin, int oraAccensione, int minutiAccensione, int oraSpegnimento, int minutiSpegnimento);
     int temporizzatorePosition(int id);
-    void changeStateTemporizzatore(int id);
+    bool changeStateTemporizzatore(int id);
     bool deleteTemporizzatore(int id);
     bool resetTemporizzatore(int id, int oraAccensione, int minutiAccensione, int oraSpegnimento, int minutiSpegnimento);
 
