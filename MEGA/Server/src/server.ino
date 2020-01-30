@@ -122,7 +122,7 @@ void loop()
     }
     else if ((*(messaggio.returnComando()))=="changecontrollerstate")
     {
-      db.changeControllerState(messaggio.returnParams()[0]);//manca gestione errore
+      executionError = db.changeControllerState(messaggio.returnParams()[0]);
     } 
     else if ((*(messaggio.returnComando()))=="removecontroller")
       executionError=db.deletController(messaggio.returnParams()[0]);//manca gestione errori

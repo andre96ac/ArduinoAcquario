@@ -157,10 +157,36 @@
     return posizione;
   };
 
-  void Database::changeControllerState(int id)
+  bool Database::changeControllerState(int id)
   {
+    bool errore=false;
     int posizione=controllerPosition(id);
-    controllers[posizione]->changeState();
+    //se il controller non esiste, ritorna errore
+    if (posizione==-1)
+    {
+      errore=true;
+    }
+    else //altrimenti, se esiste
+    {
+      //controlla se i led associati sono occupati
+      if ((leds[
+        ledPosition(controllers[controllerPosition(id)]->returnIdLed1())
+        ]->isBusy())
+        ||
+        (leds[ledPosition(controllers[controllerPosition(id)]->returnIdLed2())
+        ]->isBusy())
+      )
+      {
+        //se si, ritorna errore
+        errore=true;
+      }
+      else
+      {
+        //altrimenti cambia stato
+        controllers[posizione]->changeState();
+      }
+    }
+    return errore;    
   };
 
 

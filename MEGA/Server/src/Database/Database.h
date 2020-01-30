@@ -31,7 +31,7 @@ class Database
     bool cambiaStatoLed(int pin);
 
 
-    void changeControllerState(int id);
+    bool changeControllerState(int id);
     bool addController(int id, int pin1, int pin2, int secondi);
     int controllerPosition(int id);
     bool deletController(int id);
