@@ -169,13 +169,13 @@
     else //altrimenti, se esiste
     {
       //controlla se i led associati sono occupati
-      if ((leds[
+      if (((leds[
         ledPosition(controllers[controllerPosition(id)]->returnIdLed1())
         ]->isBusy())
         ||
         (leds[ledPosition(controllers[controllerPosition(id)]->returnIdLed2())
         ]->isBusy())
-      )
+      )&&(controllers[posizione]->returnState()==SPENTO))
       {
         //se si, ritorna errore
         errore=true;

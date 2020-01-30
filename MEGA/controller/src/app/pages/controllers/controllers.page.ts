@@ -5,6 +5,8 @@ import { DataService } from 'src/app/services/data.service';
 import { ModalController, AlertController } from '@ionic/angular';
 import { ControllerModel } from 'src/app/models/controller.model';
 import { AddPage } from './add/add.page';
+import { LedModel } from 'src/app/models/led.model';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-controllers',
@@ -55,29 +57,49 @@ export class ControllersPage implements OnInit {
     }
     )
     return await modal.present();
-}
+  }
 
-async presentAlertConfirmDelete(id: number) {
-  const alert = await this.alertCtrl.create({
-    header: 'Conferma',
-    message: 'Desideri rimuovere il dispositivo?',
-    buttons: [
-      {
-        text: 'Annulla',
-        handler: () => {
+  async presentAlertConfirmDelete(id: number) {
+    const alert = await this.alertCtrl.create({
+      header: 'Conferma',
+      message: 'Desideri rimuovere il dispositivo?',
+      buttons: [
+        {
+          text: 'Annulla',
+          handler: () => {
 
+          }
+        }, {
+          text: 'Conferma',
+          handler: () => {
+            this.dataService.removeController(id);
+          }
         }
-      }, {
-        text: 'Conferma',
-        handler: () => {
-          this.dataService.removeController(id);
-        }
-      }
-    ]
-  });
+      ]
+    });
 
-  await alert.present();
-}
-  
+    await alert.present();
+  }
+    
+  isSwitchable(controller : ControllerModel)
+  {
+    let led1: LedModel;
+    let led2: LedModel;
+    led1=this.loadedConfig.leds.find(element=>{
+     return  element.id===controller.idled1? true: false;
+      
+    });
+    led2=this.loadedConfig.leds.find(element=>{
+      return element.id===controller.idled2? true: false
+    });
 
+    if ((led1.busy||led2.busy)&&(controller.state===false))
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
 }

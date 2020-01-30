@@ -37,12 +37,24 @@ export class DataService {
     let request = this._myUrl+'getconfig*'
     this.httpClient.get(request)
       .subscribe(data=>{
+        //quando arrivano i dati, li inserisco nell'oggetto
         this._config.leds=data['leds'];
         this._config.controllers=data['controllers'];
         this._config.temporizzatori=data['temporizzatori'];
         this._config.termometri=data['termometri'];
         this._config.dpinbusy=data['dpinbusy'];
+
+        //riordino gli elementi
+        this._config.leds.sort((a, b)=> a.id-b.id);
+        this._config.controllers.sort((a,b)=>a.id-b.id);
+        this._config.temporizzatori.sort((a,b)=>a.id-b.id);
+        this._config.termometri.sort((a,b)=> a.id-b.id);
+
+        //ed emetto l'evento di configurazione cambiata
         this.configChanged.next(this._config);
+
+
+
       });
      
   }

@@ -33,7 +33,7 @@
               <ion-grid>
                 <ion-row align-items-center>
                   <ion-col>
-                    <ion-toggle [checked]="item.state"  (ionChange)="onClickSwitch(item.id)" ></ion-toggle>
+                    <ion-toggle [checked]="item.state" [disabled]="!isSwitchable(item)" (ionChange)="onClickSwitch(item.id)" ></ion-toggle>
                   </ion-col>
                   <ion-col>
                     <ion-button (click)="onRemovingController(item.id)" fill="outline" expand="block">
