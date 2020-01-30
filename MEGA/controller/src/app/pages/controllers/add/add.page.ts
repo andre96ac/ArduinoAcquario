@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ControllerModel } from 'src/app/models/controller.model';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavParams } from '@ionic/angular';
+import { LedModel } from 'src/app/models/led.model';
 
 @Component({
   selector: 'app-add',
@@ -12,8 +13,11 @@ export class AddPage implements OnInit {
 
   form: FormGroup;
   newController:ControllerModel;
+  leds : LedModel[];
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController, private navParams: NavParams) {
+    this.leds=navParams.get('data');
+   }
 
   ngOnInit() {
 
@@ -24,11 +28,11 @@ export class AddPage implements OnInit {
         updateOn: 'blur',
         validators: [Validators.required]
       }),
-      idL1: new FormControl(null,{
+      idL1: new FormControl(this.newController.idled1,{
         updateOn:'blur',
         validators: [Validators.required]
       }),
-      idL2: new FormControl(null, {
+      idL2: new FormControl(this.newController.idled2, {
         updateOn: 'blur',
         validators: [Validators.required]
       }),

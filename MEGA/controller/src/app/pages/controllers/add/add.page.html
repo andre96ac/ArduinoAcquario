@@ -10,22 +10,28 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="form">
+  <form [formGroup]="form" >
     <ion-list>
         <ion-item>
           <ion-label position="floating">Identificativo</ion-label>
           <ion-input type="number"  formControlName="id"></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-label position="floating">Pin device 1</ion-label>
-          <ion-input type="number"  formControlName="idL1"></ion-input>
+        <ion-item >
+          <ion-label position="floating">Presa dispositivo 1</ion-label>
+          <ion-select  formControlName="idL1" >
+            <ion-select-option *ngFor="let led of leds" [value]="led.id" [disabled]="led.busy">
+              Presa  {{ led.id }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item>
-          <ion-label position="floating">Pin device 2</ion-label>
-          <ion-input type="number"  formControlName="idL2"></ion-input>
+          <ion-label position="floating">Presa dispositivo 2</ion-label>
+          <ion-select formControlName="idL2"  >
+            <ion-select-option *ngFor="let led of leds" [value]="led.id" [disabled]="led.busy">Presa  {{ led.id }}</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item>
-          <ion-label position="floating">Intervallo di pulsazione</ion-label>
+          <ion-label position="floating">Intervallo di pulsazione (millisecondi)</ion-label>
           <ion-input type="number"  formControlName="deltaTime"></ion-input>
         </ion-item>
       </ion-list>      

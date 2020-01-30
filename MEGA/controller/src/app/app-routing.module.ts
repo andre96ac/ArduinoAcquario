@@ -12,6 +12,10 @@ const routes: Routes = [
     path: 'controllers',
     loadChildren: () => import('./pages/controllers/controllers.module').then( m => m.ControllersPageModule)
   },
+  {
+    path: 'timers',
+    loadChildren: () => import('./pages/timers/timers.module').then( m => m.TimersPageModule)
+  },
 ];
 
 @NgModule({

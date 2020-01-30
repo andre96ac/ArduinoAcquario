@@ -41,6 +41,7 @@ export class ControllersPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: AddPage,
+      componentProps: {data: this.loadedConfig.leds}
     });
 
     modal.onWillDismiss()
