@@ -3,22 +3,15 @@ import { ConfigModel } from '../models/config.model'
 import { LedModel } from '../models/led.model';
 import { ControllerModel } from '../models/controller.model';
 import { TemporizzatoreModel } from '../models/temporizzatore.model';
-import { TermometroModel } from '../models/termometro.model';
+import { TermometroModel, TermometroType } from '../models/termometro.model';
 
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, Subject, config } from 'rxjs'
-import { map, catchError, } from 'rxjs/operators';
-import { Serializer } from '@angular/compiler';
-import { Time } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs'
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-
-  /*private _controllers: ControllerModel[]=[];
-  private _temporizzatori: TemporizzatoreModel[]=[];
-  private _termometri: TermometroModel[]=[];*/
 
   private _config= new ConfigModel;
 
@@ -28,9 +21,6 @@ export class DataService {
 
   public configChanged= new Subject<ConfigModel>();
   public ledsChanged= new Subject<LedModel[]>();
-
-
-
 
   constructor(private httpClient : HttpClient) { }
 
@@ -75,7 +65,6 @@ export class DataService {
 
       this.getConfig();
   }
-
   switch (pin: number)
   {
     this.httpClient.get<any>(
@@ -89,7 +78,6 @@ export class DataService {
 
       this.getConfig();
   }
-
   removeLed (pin : number)
   {
     this.httpClient.get<any>(
@@ -107,10 +95,10 @@ export class DataService {
       this.getConfig();
   }
 
-  addController(id: number, idL1: number, idL2: number, ms: number)
+  addController(item:ControllerModel)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'addcontroller&'+id+'&'+idL1+'&'+idL2+'&'+ms+'*'), {
+      (this._myUrl+'addcontroller&'+item.id+'&'+item.idled1+'&'+item.idled2+'&'+item.deltatime+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -120,7 +108,6 @@ export class DataService {
       });
       this.getConfig();
   }
-
   changeControllerState (id: number)
   {
     this.httpClient.get<any>(
@@ -134,7 +121,6 @@ export class DataService {
 
       this.getConfig();
   }
-
   removeController(id:number)
   {
     this.httpClient.get<any>(
@@ -161,7 +147,6 @@ export class DataService {
       });
       this.getConfig();
   }
-
   removeTemporizzatore(id:number){
     this.httpClient.get<any>(
       (this._myUrl+'removetemporizzatore'+'&'+id+'*'), {
@@ -175,7 +160,6 @@ export class DataService {
       this.getConfig();
 
   }
-
   changeTemporizzatoreState(id: number){
     this.httpClient.get<any>(
       (this._myUrl+'changetemporizzatorestate'+'&'+id+'*'), {
@@ -189,10 +173,78 @@ export class DataService {
       this.getConfig();
 
   }
+
+  addTermometro(item: TermometroModel)
+  {
+    if(item.type===TermometroType.TERMOMETRO)
+    this.httpClient.get<any>(
+      (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'*'), {
+        observe: 'response',
+        responseType: 'text' as 'json'
+      }
+    ).subscribe(response=>{
+      console.log (response.status);
+    })
+
+
+    else if(item.type===TermometroType.TERMOSTATO)
+    {
+      this.httpClient.get<any>(
+        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.settemp+'*'),{
+          observe: 'response',
+          responseType: 'text' as 'json'
+        }
+      ).subscribe(response=>{
+        console.log(response.status);
+      })
+    }
+
+
+
+    else if (item.type===TermometroType.TEMPORIZZATORE)
+    {
+      this.httpClient.get<any>(
+        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.idrefrig+'&'+item.settemp+'&'+item.deltatemp+'*'),
+        {
+          observe: 'response',
+          responseType: 'text' as 'json'
+        }
+      ).subscribe(response=>{
+        console.log(response.status)
+      })
+    }
+
+    this.getConfig();
+  }
+
+  changeTermometroState(id: number)
+  {
+    this.httpClient.get<any>(
+      (this._myUrl+'changetermometrostate'+'&'+id+'*'), {
+        observe: 'response',
+        responseType: 'text' as 'json'
+      }
+    ).subscribe(response=>{
+      console.log(response.status);
+    })
+
+    this.getConfig();
+  }
+
+  removeTermometro(id: number){
+    this.httpClient.get<any>(
+      (this._myUrl+'removetermometro'+'&'+id+'*'),
+      {
+        observe: 'response',
+        responseType: 'text' as 'json'
+      }
+    ).subscribe(response=>{
+      console.log (response.status);
+    })
+  }  
+
+
   
-
-
-
  /* //Gestisce gli errori di risposta
   private handleError(error: HttpErrorResponse) {
     if(error.error instanceof ErrorEvent) {

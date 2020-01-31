@@ -2,12 +2,12 @@ export class TermometroModel{
     id: number;
     type:TermometroType;
     stato: boolean;
-    pinTerm: number;
-    redTemperature: number;
-    idRiscal: number;
-    idRefrig: number;
-    setTemp: number;
-    deltaTemp: number;
+    pinterm: number;
+    readtemp: number;
+    idrisc: number;
+    idrefrig: number;
+    settemp: number;
+    deltatemp: number;
 
 
 }

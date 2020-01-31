@@ -52,7 +52,7 @@ export class ControllersPage implements OnInit {
       newController=newController['data'];
       if (newController)
       {
-        this.dataService.addController(newController.id, newController.idled1, newController.idled2, newController.deltatime);
+        this.dataService.addController(newController);
       }
     }
     )
