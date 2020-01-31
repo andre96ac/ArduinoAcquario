@@ -208,7 +208,8 @@ void loop()
     {
       client.println(F("HTTP/1.1 400 Bad Request"));
       client.println(F("Content-Type: text/html"));
-      client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+      //client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+      client.println(F("Access-Control-Allow-Origin: *"));
       client.println();
       client.println(F("Parametri richiesta errati"));
     }
@@ -216,7 +217,8 @@ void loop()
     {
       client.println(F("HTTP/1.1 500 Internal Server Error"));
       client.println(F("Content-Type: text/html"));
-      client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+      // client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+      client.println(F("Access-Control-Allow-Origin: *"));
       client.println();
       client.println(F("Errore interno, impossibile portare a termine l'operazione"));      
     }
@@ -228,7 +230,8 @@ void loop()
         //mando risposta OK
         client.println(F("HTTP/1.1 200 OK"));
         client.println(F("Content-Type: application/json"));
-        client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+        // client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+        client.println(F("Access-Control-Allow-Origin: *"));
         client.println(); 
         //mando il json
         db.sendConfiguration(&client);
@@ -239,7 +242,8 @@ void loop()
         //mando solo risposta OK
         client.println(F("HTTP/1.1 200 OK"));
         client.println(F("Content-Type: text/html"));
-        client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+        // client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
+        client.println(F("Access-Control-Allow-Origin: *"));
         client.println(); 
         client.println(F("Operazione eseguita"));
       }
