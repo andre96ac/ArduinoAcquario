@@ -40,9 +40,9 @@ ion-content
     height: 100%;
 }
 
-.card-disp >ion-card-header i, .card-disp >ion-card-header>ion-icon, .card-disp>ion-icon
+.card-disp >ion-card-header i, .card-disp >ion-card-header>ion-icon, .card-disp>ion-icon, .card-disp>ion-grid>ion-row>ion-col>i
 {
-    font-size: 40px;
+    font-size: 35px;
     padding: 5px;
     
     
@@ -53,7 +53,7 @@ ion-content
     color: #ffffff;
 }
 
-.card-disp >ion-card-header i
+.card-disp  i
 {
     color: #ffffff;
 }

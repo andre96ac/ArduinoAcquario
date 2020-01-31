@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Aggiungi Temporizzatore</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" >
+    <ion-list>
+        <ion-item>
+          <ion-label position="floating">Identificativo</ion-label>
+          <ion-input type="number"  formControlName="id"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Presa dispositivo</ion-label>
+          <ion-select  formControlName="idL" >
+            <ion-select-option *ngFor="let led of leds" [value]="led.id" [disabled]="led.busy">
+              Presa  {{ led.id }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Orario di accensione</ion-label>
+          <ion-datetime displayFormat ="HH mm" formControlName="tAcc"></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Orario di spegnimento</ion-label>
+          <ion-datetime displayFormat ="HH mm" formControlName="tSpegn"></ion-datetime>
+        </ion-item>
+      </ion-list>      
+  </form>
+  <ion-button fill="outline" expand="block" [disabled]="!form.valid" (click)="submit()">
+    Conferma
+  </ion-button>
+</ion-content>
+

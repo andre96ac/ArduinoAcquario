@@ -9,6 +9,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, Subject, config } from 'rxjs'
 import { map, catchError, } from 'rxjs/operators';
 import { Serializer } from '@angular/compiler';
+import { Time } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class DataService {
 
   public configChanged= new Subject<ConfigModel>();
   public ledsChanged= new Subject<LedModel[]>();
+
 
 
 
@@ -67,9 +69,7 @@ export class DataService {
         responseType: 'text' as 'json'
       })
       .subscribe(risposta => {
-        //console.log(risposta);
         console.log(risposta.status);
-        return risposta.status;
       })
       ;
 
@@ -89,7 +89,6 @@ export class DataService {
 
       this.getConfig();
   }
-
 
   removeLed (pin : number)
   {
@@ -118,9 +117,7 @@ export class DataService {
       .subscribe(risposta => {
         console.log(risposta.status);
         return risposta.status;
-      })
-      ;
-
+      });
       this.getConfig();
   }
 
@@ -151,6 +148,48 @@ export class DataService {
 
       this.getConfig();
   }
+
+   addTemporizzatore(item: TemporizzatoreModel){
+
+    this.httpClient.get<any>(
+      (this._myUrl+'addtemporizzatore&'+item.id+'&'+item.idled+'&'+item.hacc+'&'+item.minacc+'&'+item.hspegn+'&'+item.minspegn+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status);
+      });
+      this.getConfig();
+  }
+
+  removeTemporizzatore(id:number){
+    this.httpClient.get<any>(
+      (this._myUrl+'removetemporizzatore'+'&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status)
+      });
+
+      this.getConfig();
+
+  }
+
+  changeTemporizzatoreState(id: number){
+    this.httpClient.get<any>(
+      (this._myUrl+'changetemporizzatorestate'+'&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status)
+      });
+
+      this.getConfig();
+
+  }
+  
 
 
 

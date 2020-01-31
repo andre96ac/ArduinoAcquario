@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestione Timers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-card class="card-disp" *ngFor="let item of loadedConfig.temporizzatori">
+        <ion-grid>
+          <ion-row class="ion-text-center">
+            <ion-col>
+              <p>{{ item.id }}</p>
+            </ion-col>
+            <ion-col>
+              <p>{{ item.idled }}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <i class="far fa-clock"></i>
+            </ion-col>
+            <ion-col>
+              <ion-label>
+                <p>{{ item.hacc }}:{{ item.minacc }}</p>
+                <p>{{ item.hspegn }}:{{ item.minspegn }}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-toggle [checked]="item.state" [disabled]="!isSwitchable(item)" (ionChange)="onSwitch(item.id)"></ion-toggle>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button fill="outline" expand="block" (click)="onDeleteElement(item.id)">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    </ion-col>
+    <ion-col>
+      <ion-card class="card-disp card-add" button (click)="presentModal()">
+        <ion-row class="ion-align-items-center">
+          <ion-col class="ion-text-center">
+            <ion-icon name="add"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+</ion-content>

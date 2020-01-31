@@ -9,12 +9,12 @@
 
 <ion-content>
   <ion-grid>
-    <ion-row align-items-stretch>
+    <ion-row class="ion-align-items-stretch">
       <ion-col offsetXs=2 sizeXs=8 offsetSm=0 sizeSm=6 *ngFor="let item of loadedConfig.leds">
         <ion-card class="ion-text-center card-disp">
           <ion-card-header>
             <ion-grid>
-              <ion-row align-items-baseline>            
+              <ion-row class="ion-align-items-baseline">            
                 <ion-col size="3" offset="3">
                   <i class="fas fa-plug"></i>
                 </ion-col>
@@ -28,7 +28,7 @@
           </ion-card-header >
           <ion-card-content>
             <ion-grid>
-              <ion-row align-items-center>
+              <ion-row class="ion-align-items-center">
                 <ion-col>
                   <ion-toggle [checked]="item.stato" [disabled]="item.busy" (ionChange)="onClickSwitch(item.id)"></ion-toggle>
                   <ion-button (click)="onDeletingLed(item.id)" fill="outline" expand="block">
@@ -42,7 +42,7 @@
       </ion-col>
       <ion-col offsetXs="1" sizeXs="10" sizeSm="6">
         <ion-card button="true" class=" card-disp card-add" (click)="presentModal()">
-          <ion-row class="card" align-items-center>
+          <ion-row class="ion-align-items-center">
             <ion-col class="ion-text-center">
               <ion-icon name="add"></ion-icon>
             </ion-col>

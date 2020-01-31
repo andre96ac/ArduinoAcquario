@@ -59,10 +59,8 @@ export class HomePage implements OnInit {
         let scelta:number=data['data'];
         if(scelta['data']<=this.loadedConfig.dpinbusy.length)
         {
-
           this.dataService.addLed(scelta['data']);
         }
-
       })
       return await modal.present();
   }
