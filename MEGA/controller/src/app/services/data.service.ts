@@ -60,10 +60,11 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status);
+        this.getConfig();
+        
       })
       ;
 
-      this.getConfig();
   }
   switch (pin: number)
   {
@@ -74,9 +75,9 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status)
+        this.getConfig();
       });
 
-      this.getConfig();
   }
   removeLed (pin : number)
   {
@@ -86,13 +87,10 @@ export class DataService {
         responseType: 'text' as 'json'
       })
       .subscribe(risposta => {
-        //console.log(risposta);
         console.log(risposta.status);
-        return risposta.status;
-      })
-      ;
+        this.getConfig();
+      });
 
-      this.getConfig();
   }
 
   addController(item:ControllerModel)
@@ -104,9 +102,8 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status);
-        return risposta.status;
+        this.getConfig();
       });
-      this.getConfig();
   }
   changeControllerState (id: number)
   {
@@ -117,9 +114,9 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status)
+        this.getConfig();
       });
 
-      this.getConfig();
   }
   removeController(id:number)
   {
@@ -130,9 +127,9 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status)
+        this.getConfig();
       });
 
-      this.getConfig();
   }
 
    addTemporizzatore(item: TemporizzatoreModel){
@@ -144,8 +141,8 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status);
+        this.getConfig();
       });
-      this.getConfig();
   }
   removeTemporizzatore(id:number){
     this.httpClient.get<any>(
@@ -155,9 +152,9 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status)
+        this.getConfig();
       });
 
-      this.getConfig();
 
   }
   changeTemporizzatoreState(id: number){
@@ -168,26 +165,29 @@ export class DataService {
       })
       .subscribe(risposta => {
         console.log(risposta.status)
+        this.getConfig();
       });
 
-      this.getConfig();
 
   }
 
   addTermometro(item: TermometroModel)
   {
-    if(item.type===TermometroType.TERMOMETRO)
-    this.httpClient.get<any>(
-      (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'*'), {
-        observe: 'response',
-        responseType: 'text' as 'json'
-      }
-    ).subscribe(response=>{
-      console.log (response.status);
-    })
+    if(item.type==TermometroType.TERMOMETRO)
+    {
+      this.httpClient.get<any>(
+        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'*'), {
+          observe: 'response',
+          responseType: 'text' as 'json'
+        }
+      ).subscribe(response=>{
+        console.log (response.status);
+        this.getConfig();
+      })
+    }
 
 
-    else if(item.type===TermometroType.TERMOSTATO)
+    else if(item.type==TermometroType.TERMOSTATO)
     {
       this.httpClient.get<any>(
         (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.settemp+'*'),{
@@ -196,12 +196,13 @@ export class DataService {
         }
       ).subscribe(response=>{
         console.log(response.status);
+        this.getConfig();
       })
     }
 
 
 
-    else if (item.type===TermometroType.TEMPORIZZATORE)
+    else if (item.type==TermometroType.CLIMA)
     {
       this.httpClient.get<any>(
         (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.idrefrig+'&'+item.settemp+'&'+item.deltatemp+'*'),
@@ -211,10 +212,11 @@ export class DataService {
         }
       ).subscribe(response=>{
         console.log(response.status)
+        this.getConfig();
       })
+      
     }
 
-    this.getConfig();
   }
 
   changeTermometroState(id: number)
@@ -226,9 +228,8 @@ export class DataService {
       }
     ).subscribe(response=>{
       console.log(response.status);
+      this.getConfig();
     })
-
-    this.getConfig();
   }
 
   removeTermometro(id: number){
@@ -240,6 +241,7 @@ export class DataService {
       }
     ).subscribe(response=>{
       console.log (response.status);
+      this.getConfig();
     })
   }  
 
