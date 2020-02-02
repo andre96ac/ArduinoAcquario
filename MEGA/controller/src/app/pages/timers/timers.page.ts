@@ -3,7 +3,7 @@ import { ConfigModel } from 'src/app/models/config.model';
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { TemporizzatoreModel } from 'src/app/models/temporizzatore.model';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { AddPage } from './add/add.page';
 import { ProviderAst } from '@angular/compiler';
 import { Time } from '@angular/common';
@@ -18,7 +18,7 @@ export class TimersPage implements OnInit {
   loadedConfig: ConfigModel = new ConfigModel;
   configChanged: Subscription;
 
-  constructor(private dataService: DataService, private modalCtrl: ModalController) {
+  constructor(private dataService: DataService, private modalCtrl: ModalController, private alertCtrl: AlertController) {
   }
   
   ngOnInit() {
@@ -28,9 +28,26 @@ export class TimersPage implements OnInit {
     this.dataService.getConfig();
   }
 
-  onDeleteElement(id:number)
+  async onDeleteElement(id:number)
   {
-    this.dataService.removeTemporizzatore(id);
+      const alert= await this.alertCtrl.create({
+      header:'Conferma',
+      message: 'Sei sicuro?',
+      buttons: [
+        {
+          text: 'Conferma',
+          handler: ()=>{
+            this.dataService.removeTemporizzatore(id);
+          }
+        },
+        {
+          text: 'Annulla',
+          handler:()=>{}
+        }
+      ]
+    });
+
+    alert.present();
   }
 
   onSwitch(id: number)

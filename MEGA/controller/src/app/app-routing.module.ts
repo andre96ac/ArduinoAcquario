@@ -16,6 +16,10 @@ const routes: Routes = [
     path: 'timers',
     loadChildren: () => import('./pages/timers/timers.module').then( m => m.TimersPageModule)
   },
+  {
+    path: 'temperature',
+    loadChildren: () => import('./pages/temperature/temperature.module').then( m => m.TemperaturePageModule)
+  },
 ];
 
 @NgModule({

@@ -18,6 +18,6 @@ export enum TermometroType{
 
     TERMOMETRO=0,
     TERMOSTATO=1,
-    TEMPORIZZATORE=2
+    CLIMA=2
 
 }

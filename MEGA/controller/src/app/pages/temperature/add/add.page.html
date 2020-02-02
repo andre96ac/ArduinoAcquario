@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Aggiungi Controller</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" >
+    <ion-list>
+        <ion-item>
+          <ion-label position="floating">Identificativo</ion-label>
+          <ion-input type="number"  formControlName="id"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Tipo di controller</ion-label>
+          <ion-select  formControlName="type" (ngModelChange)="onChangingType()" >
+            <ion-select-option value="0" >Termometro</ion-select-option>
+            <ion-select-option value="1" >Termostato</ion-select-option>
+            <ion-select-option value="2" >Climatizzatore</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Presa Termometro</ion-label>
+          <ion-select  formControlName="idTerm" >
+            <ion-select-option *ngFor="let busy of loadedConfig.dpinbusy; let c = index" [value]="c" [disabled]="busy">
+              Presa  {{ c }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item *ngIf="!(newTermometro.type==0)">
+          <ion-label position="floating" >Presa Riscaldatore</ion-label>
+          <ion-select  formControlName="idRisc" >
+            <ion-select-option *ngFor="let led of loadedConfig.leds" [value]="led.id" [disabled]="led.busy">
+              Dispositivo  {{ led.id }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item  *ngIf="newTermometro.type==2">
+          <ion-label position="floating" >Presa Refrigeratore</ion-label>
+          <ion-select  formControlName="idRefrig" >
+            <ion-select-option *ngFor="let led of loadedConfig.leds" [value]="led.id" [disabled]="led.busy">
+              Dispositivo  {{ led.id }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item *ngIf="!(newTermometro.type==0)" (click)="showTempPicker()">
+          <ion-label position="floating" >Temperatura (C°)</ion-label>
+          <ion-input readonly="true" formControlName="setTemp"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="newTermometro.type==2" (click)="showDeltaPicker()">
+          <ion-label position="floating" >Tolleranza (C°)</ion-label>
+          <ion-input readonly="true" formControlName="deltaTemp"></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button fill="outline" expand="block" [disabled]="!form.valid" (click)="submit()"> 
+        conferma
+      </ion-button>  
+  </form>
+</ion-content>

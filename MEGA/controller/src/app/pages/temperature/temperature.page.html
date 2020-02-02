@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Gestione Temperatura</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" *ngFor="let item of loadedConfig.termometri">
+        <ion-card class="card">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <ion-card class="cardTemp">
+                  <ion-row>
+                    <ion-col class="ion-text-center ion-align-self-center">
+                      <i class="fas fa-thermometer-three-quarters"></i>
+                    </ion-col>
+                    <ion-col class="ion-align-self-center">
+                      <h1 class="ion-no-margin">{{ item.readtemp/10 |number:'.1-1'}}°</h1>
+                      <p class="ion-text-center ion-no-margin">(<i class="fas fa-plug"></i> {{ item.pinterm }})</p>
+                    </ion-col>
+                  </ion-row>
+                </ion-card>
+              </ion-col>
+              <ion-col size="6" *ngIf="item.type!=0">
+                <ion-card class="cardSet" >
+                  <ion-row>
+                    <ion-col>
+                      <ion-card class="ion-no-margin ion-text-center  {{findLed(item.idrisc).stato? 'cardHeatingOn':'cardHeatingOff'}}">
+                        <p class="ion-no-margin">
+                          <i class="fas fa-burn"></i> 
+                          <span style="font-size: 8px;">
+                            (<i class="fas fa-plug" style="font-size: 8px;"></i>
+                            {{ item.idrisc }})
+                          </span>
+                      </ion-card> 
+                    </ion-col>
+                    <ion-col *ngIf="item.type==2">
+                    <ion-card class="ion-no-margin ion-text-center {{findLed(item.idrefrig).stato? 'cardHeatingOn':'cardHeatingOff'}}" >
+                        <p class="ion-no-margin">
+                          <i class="far fa-snowflake"></i> 
+                          <span style="font-size: 8px;">
+                            (<i class="fas fa-plug" style="font-size: 8px;"></i>
+                            {{ item.idrefrig }})
+                          </span>
+                        </p>
+                      </ion-card>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <h3 class="ion-no-margin ion-text-center">{{ (item.settemp/10)|number:'.1-1' }}°<span *ngIf="item.type==2">~{{ (item.deltatemp/10)|number:'.1-1' }}°</span></h3>
+                    </ion-col>
+                  </ion-row>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-align-items-stretch">
+              <ion-col size="5" >
+                <ion-button fill="outline" expand="block" [color]="item.stato? 'primary': 'medium'" (click)="onSwitching(item.id)">
+                  <ion-icon name="power"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <ion-col class="ion-align-self-center">
+                <h4 class="ion-text-center ion-no-margin">Id: {{ item.id }}</h4>
+              </ion-col>
+              <ion-col size="5">
+                <ion-button fill="outline" expand="block" (click)="onRemoving(item.id)">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card button class="cardAdd card" (click)="onAdding()">
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-align-self-center ion-text-center">
+                <ion-icon name="add"></ion-icon>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
