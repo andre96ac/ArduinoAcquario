@@ -62,7 +62,7 @@ export class ControllersPage implements OnInit {
   async presentAlertConfirmDelete(id: number) {
     const alert = await this.alertCtrl.create({
       header: 'Conferma',
-      message: 'Desideri rimuovere il dispositivo?',
+      message: 'Desideri rimuovere il controller?',
       buttons: [
         {
           text: 'Annulla',

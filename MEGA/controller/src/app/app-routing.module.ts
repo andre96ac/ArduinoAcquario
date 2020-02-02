@@ -20,6 +20,10 @@ const routes: Routes = [
     path: 'temperature',
     loadChildren: () => import('./pages/temperature/temperature.module').then( m => m.TemperaturePageModule)
   },
+  {
+    path: 'config',
+    loadChildren: () => import('./pages/config/config.module').then( m => m.ConfigPageModule)
+  },
 ];
 
 @NgModule({

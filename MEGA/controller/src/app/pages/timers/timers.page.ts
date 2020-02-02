@@ -32,7 +32,7 @@ export class TimersPage implements OnInit {
   {
       const alert= await this.alertCtrl.create({
       header:'Conferma',
-      message: 'Sei sicuro?',
+      message: 'Desideri rimuovere il controller?',
       buttons: [
         {
           text: 'Conferma',

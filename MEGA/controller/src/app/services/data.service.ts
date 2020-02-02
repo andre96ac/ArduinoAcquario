@@ -4,6 +4,7 @@ import { LedModel } from '../models/led.model';
 import { ControllerModel } from '../models/controller.model';
 import { TemporizzatoreModel } from '../models/temporizzatore.model';
 import { TermometroModel, TermometroType } from '../models/termometro.model';
+import { LocalService } from './local.service'
 
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs'
@@ -15,18 +16,14 @@ export class DataService {
 
   private _config= new ConfigModel;
 
-  private _myIp: string='2.238.115.27';
-  private _myPort: string ='11111';
-  private _myUrl: string=('http://'+this._myIp+':'+this._myPort+'/?')
-
   public configChanged= new Subject<ConfigModel>();
   public ledsChanged= new Subject<LedModel[]>();
 
-  constructor(private httpClient : HttpClient) { }
+  constructor(private httpClient : HttpClient, private localService : LocalService) { }
 
   getConfig()
   {
-    let request = this._myUrl+'getconfig*'
+    let request = this.localService.myUrl+'getconfig*'
     this.httpClient.get(request)
       .subscribe(data=>{
         //quando arrivano i dati, li inserisco nell'oggetto
@@ -54,7 +51,7 @@ export class DataService {
   addLed (pin : number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'addled&'+pin+'*'), {
+      (this.localService.myUrl+'addled&'+pin+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -69,7 +66,7 @@ export class DataService {
   switch (pin: number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'switch&'+pin+'*'), {
+      (this.localService.myUrl+'switch&'+pin+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -82,7 +79,7 @@ export class DataService {
   removeLed (pin : number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'removeled&'+pin+'*'), {
+      (this.localService.myUrl+'removeled&'+pin+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -96,7 +93,7 @@ export class DataService {
   addController(item:ControllerModel)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'addcontroller&'+item.id+'&'+item.idled1+'&'+item.idled2+'&'+item.deltatime+'*'), {
+      (this.localService.myUrl+'addcontroller&'+item.id+'&'+item.idled1+'&'+item.idled2+'&'+item.deltatime+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -108,7 +105,7 @@ export class DataService {
   changeControllerState (id: number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'changecontrollerstate'+'&'+id+'*'), {
+      (this.localService.myUrl+'changecontrollerstate'+'&'+id+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -121,7 +118,7 @@ export class DataService {
   removeController(id:number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'removecontroller'+'&'+id+'*'), {
+      (this.localService.myUrl+'removecontroller'+'&'+id+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -135,7 +132,7 @@ export class DataService {
    addTemporizzatore(item: TemporizzatoreModel){
 
     this.httpClient.get<any>(
-      (this._myUrl+'addtemporizzatore&'+item.id+'&'+item.idled+'&'+item.hacc+'&'+item.minacc+'&'+item.hspegn+'&'+item.minspegn+'*'), {
+      (this.localService.myUrl+'addtemporizzatore&'+item.id+'&'+item.idled+'&'+item.hacc+'&'+item.minacc+'&'+item.hspegn+'&'+item.minspegn+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -146,7 +143,7 @@ export class DataService {
   }
   removeTemporizzatore(id:number){
     this.httpClient.get<any>(
-      (this._myUrl+'removetemporizzatore'+'&'+id+'*'), {
+      (this.localService.myUrl+'removetemporizzatore'+'&'+id+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -159,7 +156,7 @@ export class DataService {
   }
   changeTemporizzatoreState(id: number){
     this.httpClient.get<any>(
-      (this._myUrl+'changetemporizzatorestate'+'&'+id+'*'), {
+      (this.localService.myUrl+'changetemporizzatorestate'+'&'+id+'*'), {
         observe:'response',
         responseType: 'text' as 'json'
       })
@@ -176,7 +173,7 @@ export class DataService {
     if(item.type==TermometroType.TERMOMETRO)
     {
       this.httpClient.get<any>(
-        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'*'), {
+        (this.localService.myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'*'), {
           observe: 'response',
           responseType: 'text' as 'json'
         }
@@ -190,7 +187,7 @@ export class DataService {
     else if(item.type==TermometroType.TERMOSTATO)
     {
       this.httpClient.get<any>(
-        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.settemp+'*'),{
+        (this.localService.myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.settemp+'*'),{
           observe: 'response',
           responseType: 'text' as 'json'
         }
@@ -205,7 +202,7 @@ export class DataService {
     else if (item.type==TermometroType.CLIMA)
     {
       this.httpClient.get<any>(
-        (this._myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.idrefrig+'&'+item.settemp+'&'+item.deltatemp+'*'),
+        (this.localService.myUrl+'addtermometro&'+item.id+'&'+item.pinterm+'&'+item.idrisc+'&'+item.idrefrig+'&'+item.settemp+'&'+item.deltatemp+'*'),
         {
           observe: 'response',
           responseType: 'text' as 'json'
@@ -222,7 +219,7 @@ export class DataService {
   changeTermometroState(id: number)
   {
     this.httpClient.get<any>(
-      (this._myUrl+'changetermometrostate'+'&'+id+'*'), {
+      (this.localService.myUrl+'changetermometrostate'+'&'+id+'*'), {
         observe: 'response',
         responseType: 'text' as 'json'
       }
@@ -234,7 +231,7 @@ export class DataService {
 
   removeTermometro(id: number){
     this.httpClient.get<any>(
-      (this._myUrl+'removetermometro'+'&'+id+'*'),
+      (this.localService.myUrl+'removetermometro'+'&'+id+'*'),
       {
         observe: 'response',
         responseType: 'text' as 'json'
@@ -279,7 +276,7 @@ export class DataService {
   }
 
   myCall(pin : number) {
-    let url = this._myUrl+'addled&'+pin+'*';
+    let url = this.localService.myUrl+'addled&'+pin+'*';
     this.myGet(url)
     .subscribe(result => {
       this.error=false;

@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Impostazioni</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">IP della rete:</ion-label>
+      <ion-input type="text" [placeholder]="loadedIp" [(ngModel)]="loadedIp" ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Porta:</ion-label>
+      <ion-input type="number" [placeholder]="loadedPort" [(ngModel)]="loadedPort" ></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button fill="outline" expand="block" (click)="onSubmit()">
+    <ion-icon name="checkbox-outline"></ion-icon>
+    Conferma
+  </ion-button>
+</ion-content>

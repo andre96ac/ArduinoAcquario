@@ -39,7 +39,7 @@ export class TemperaturePage implements OnInit {
   {
     this.alertCtrl.create({
       header: 'Conferma',
-      message:'Sei sicuro?',
+      message:'Desideri rimuovere il controller?',
       buttons:[
         {
           text:'Annulla',

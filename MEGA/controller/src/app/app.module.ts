@@ -12,11 +12,24 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { IonicStorageModule } from '@ionic/storage'
+
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule, 
+    HttpClientModule, 
+    FormsModule, 
+    ReactiveFormsModule,
+    IonicModule.forRoot(),
+    IonicStorageModule.forRoot()
+    
+  ],
+
   providers: [
     StatusBar,
     SplashScreen,
