@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" close-duration="300ms" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row class="ion-align-items-stretch">
       <ion-col offsetXs=2 sizeXs=8 offsetSm=0 sizeSm=6 *ngFor="let item of loadedConfig.leds">

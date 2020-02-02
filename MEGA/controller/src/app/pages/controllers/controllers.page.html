@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" close-duration="300ms" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row>
       <ion-col *ngFor="let item of loadedConfig.controllers" offsetXs="1" sizeXs="10"  offsetSm="0" sizeSm="6">

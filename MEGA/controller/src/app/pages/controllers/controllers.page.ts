@@ -102,4 +102,11 @@ export class ControllersPage implements OnInit {
       return true;
     }
   }
+  refresh(event)
+  {
+    this.dataService.getConfig();
+    setTimeout(()=>{
+      event.target.complete()
+    }, 1000);
+  }
 }

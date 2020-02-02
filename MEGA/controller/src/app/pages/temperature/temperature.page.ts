@@ -81,4 +81,12 @@ export class TemperaturePage implements OnInit {
     modal.present();
   }
 
+  refresh(event)
+  {
+    this.dataService.getConfig();
+    setTimeout(()=>{
+      event.target.complete()
+    }, 1000);
+  }
+
 }

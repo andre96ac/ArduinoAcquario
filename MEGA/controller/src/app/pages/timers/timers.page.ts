@@ -77,5 +77,11 @@ export class TimersPage implements OnInit {
     })
     return !((led.busy)&&(temporizzatore.state==false))
   }
-
+  refresh(event)
+  {
+    this.dataService.getConfig();
+    setTimeout(()=>{
+      event.target.complete()
+    }, 1000);
+  }
 }

@@ -93,6 +93,14 @@ export class HomePage implements OnInit {
 
     await alert.present();
   }
+
+  refresh(event)
+  {
+    this.dataService.getConfig();
+    setTimeout(()=>{
+      event.target.complete()
+    }, 1000);
+  }
 }
 
 

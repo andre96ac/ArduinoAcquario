@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LocalService } from 'src/app/services/local.service';
 import { Storage } from '@ionic/storage';
 import { AlertController } from '@ionic/angular';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-config',
@@ -14,7 +15,7 @@ export class ConfigPage implements OnInit {
   loadedPort: string;
 
 
-  constructor(private localService: LocalService, private storage: Storage, private alertCtrl: AlertController) { }
+  constructor(private localService: LocalService, private dataService: DataService, private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.loadedIp=this.localService.myIp;
@@ -32,6 +33,8 @@ export class ConfigPage implements OnInit {
           handler: ()=>{
             this.localService.myIp=this.loadedIp;
             this.localService.myPort=this.loadedPort;
+            this.dataService.getConfig;
+            
           }
         },
         {

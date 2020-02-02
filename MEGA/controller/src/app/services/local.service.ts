@@ -32,6 +32,7 @@ export class LocalService {
   {
     this._myIp=ip;
     this.storage.set('ip', this._myIp);
+    
   }
 
   set myPort(port)
