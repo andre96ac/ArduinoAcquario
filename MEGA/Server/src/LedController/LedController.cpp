@@ -12,6 +12,8 @@
     LedController::~LedController()
     {
       setState(SPENTO);
+      pL1->isBusy(false);
+      pL2->isBusy(false);
     }
     bool LedController::returnState()
     {
@@ -21,6 +23,9 @@
     {
       pL1=ptrLed1;
       pL2=ptrLed2;
+      pL1->isBusy(true);
+      pL2->isBusy(true);
+
     };
     void LedController::setTime(int intervallo)
     {
@@ -31,16 +36,11 @@
       state=stato;
       if(state==ACCESO)
       {
-        pL1->isBusy(true);
-        pL2->isBusy(true);
         pL1->accendi();
         pL2->spegni();
-        
       }
       else
       {
-        pL1->isBusy(false);
-        pL2->isBusy(false);
         pL1->spegni();
         pL2->spegni();
       }

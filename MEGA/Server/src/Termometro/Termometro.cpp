@@ -12,6 +12,8 @@ Termometro::Termometro(int identificativo, int pinTermometro, Led* riscaldatore,
     type=TERMOSTATO;
     pinMode(thermPin, INPUT);
     settedTemperature=temperatura;
+    pRiscaldatore->spegni();
+    pRiscaldatore->isBusy(true);
 };
 Termometro::Termometro(int identificativo, int pinTermometro)
 {
@@ -22,6 +24,7 @@ Termometro::Termometro(int identificativo, int pinTermometro)
     pRefrigeratore=NULL;
     type=TERMOMETRO;
     pinMode(thermPin, INPUT);
+    
 };
 
 Termometro::Termometro(int identificativo, int pinTermometro, Led* riscaldatore, Led* refrigeratore, int temperatura, int differenziale)
@@ -35,34 +38,27 @@ Termometro::Termometro(int identificativo, int pinTermometro, Led* riscaldatore,
     pinMode(thermPin, INPUT);
     settedTemperature=temperatura;
     delta=differenziale;
+    pRefrigeratore->spegni();
+    pRefrigeratore->isBusy(true);
+    pRiscaldatore->spegni();
+    pRiscaldatore->isBusy(true);
 };
 
 Termometro::~Termometro()
 {
     state(SPENTO);
+    if (pRefrigeratore!=NULL)
+        pRefrigeratore->isBusy(false);
+    if (pRiscaldatore!=NULL)
+        pRiscaldatore->isBusy(false);
+
 };
 
 void Termometro::state(bool stato)
 {   
+    pRiscaldatore->spegni();
+    pRefrigeratore->spegni();
     _state=stato;
-    if (pRefrigeratore!=NULL)
-    {
-        pRefrigeratore->spegni();
-        if (_state==ACCESO)
-            pRefrigeratore->isBusy(true);
-        else
-            pRefrigeratore->isBusy(false);
-    }
-    if (pRiscaldatore!=NULL)
-    {
-        {
-            pRiscaldatore->spegni();
-            if(_state==ACCESO)
-                pRiscaldatore->isBusy(true);
-            else
-                pRiscaldatore->isBusy(false);
-        }
-    }
 };
 bool Termometro::state()
 {   

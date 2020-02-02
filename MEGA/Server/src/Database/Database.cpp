@@ -75,10 +75,15 @@
       error=true;
     else
     {
-      leds[posizione]->spegni();
-      delete leds[posizione];
-      leds[posizione]=NULL;
-      dPinsBusy[pin]=false;
+      if (leds[posizione]->isBusy())
+        error=true;
+      else
+      {
+        leds[posizione]->spegni();
+        delete leds[posizione];
+        leds[posizione]=NULL;
+        dPinsBusy[pin]=false;
+      }
     }
     return error;      
   };
@@ -168,23 +173,9 @@
     }
     else //altrimenti, se esiste
     {
-      //controlla se almeno uno dei led associati è occupato, e se stò cercando di ACCENDERE il controller
-      if (((leds[
-        ledPosition(controllers[controllerPosition(id)]->returnIdLed1())
-        ]->isBusy())
-        ||
-        (leds[ledPosition(controllers[controllerPosition(id)]->returnIdLed2())
-        ]->isBusy())
-      )&&(controllers[posizione]->returnState()==SPENTO))
-      {
-        //se si, ritorna errore
-        errore=true;
-      }
-      else
-      {
-        //altrimenti cambia stato
+        // cambia stato
         controllers[posizione]->changeState();
-      }
+    
     }
     return errore;    
   };
@@ -255,16 +246,7 @@
       error=true;
     else
     {
-      if ((leds[ledPosition(temporizzatori[temporizzatorePosition(id)]->returnIdLed())]->isBusy())
-      &&(temporizzatori[temporizzatorePosition(id)]->returnState()==SPENTO))
-      {
-        error=true;
-      }
-      else
-      {
-        temporizzatori[temporizzatorePosition(id)]->changeState();
-      }
-      
+        temporizzatori[temporizzatorePosition(id)]->changeState();      
     }
 
     return error;

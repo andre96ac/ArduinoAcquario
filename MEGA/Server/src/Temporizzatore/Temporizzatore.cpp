@@ -16,6 +16,7 @@ Temporizzatore::Temporizzatore(int identificativo, RTC_DS1307 *clock )
 Temporizzatore::~Temporizzatore()
 {
     setState(SPENTO);
+    pL->isBusy(false);
 }
 
 int Temporizzatore::returnId()
@@ -47,8 +48,7 @@ bool Temporizzatore::returnState()
 void Temporizzatore::setLed(Led *led)
 {
     pL=led;
-    Serial.println(F("ho settato il led"));
-    Serial.println(pL->returnPin());
+    pL->isBusy(true);
 };
 
 void Temporizzatore::setAccensione(int ora, int minuti)
@@ -80,13 +80,11 @@ void Temporizzatore::setState(bool stato)
     state=stato;
     if (state==ACCESO)
     {
-    pL->isBusy(true);
     pL->spegni();
     Serial.println(F("ho acceso il temporizzatore"));
     }
     else
     {
-    pL->isBusy(false);
     pL->spegni();
     Serial.println(F("ho spento il temporizzatore"));
     }

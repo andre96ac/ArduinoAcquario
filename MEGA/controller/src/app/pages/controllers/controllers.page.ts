@@ -81,27 +81,7 @@ export class ControllersPage implements OnInit {
     await alert.present();
   }
     
-  isSwitchable(controller : ControllerModel)
-  {
-    let led1: LedModel;
-    let led2: LedModel;
-    led1=this.loadedConfig.leds.find(element=>{
-     return  element.id===controller.idled1? true: false;
-      
-    });
-    led2=this.loadedConfig.leds.find(element=>{
-      return element.id===controller.idled2? true: false
-    });
-
-    if ((led1.busy||led2.busy)&&(controller.state===false))
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
+  
   refresh(event)
   {
     this.dataService.getConfig();
