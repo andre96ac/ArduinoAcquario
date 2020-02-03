@@ -1,7 +1,40 @@
-.card-add ion-icon
+.card-controller
 {
-    font-size: 40px;
-    padding: 5px;
-    color: #ffffff;
-    height: 220px;
+    i
+    {
+        font-size: 35px;
+    }
+    p
+    {
+        font-size: 18px;
+        font-weight: 700;
+    }
+    span
+    {
+        font-size: 10px;
+    }
+}
+
+
+.card-device
+{
+    i
+    {
+        font-size: 35px;
+    }
+    
+}
+
+.device-off
+{
+    color: rgba(0, 0, 0, 0.205);
+}
+
+.card-add
+{
+    ion-icon
+    {
+        font-size: 40px;
+        height: 157px;
+    }
 }

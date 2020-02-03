@@ -13,38 +13,39 @@
   </ion-refresher>
   <ion-grid>
     <ion-row class="ion-align-items-stretch">
-      <ion-col offsetXs=2 sizeXs=8 offsetSm=0 sizeSm=6 *ngFor="let item of loadedConfig.leds">
-        <ion-card class="ion-text-center card-disp">
-          <ion-card-header>
+      <ion-col sizeXs="6" sizeSm="4"*ngFor="let item of loadedConfig.leds">
+        <ion-card class="std-card">
             <ion-grid>
-              <ion-row class="ion-align-items-baseline">            
-                <ion-col size="3" offset="3">
-                  <i class="fas fa-plug"></i>
-                </ion-col>
-                <ion-col size="3" class="ion-no-padding">
-                  <ion-label>
-                    <p >{{ item.id }}</p>
-                  </ion-label>
+              <ion-row class="ion-text-center">            
+                <ion-col>
+                  <ion-card class="card-presa ion-margin-horizontal">
+                    <ion-row>
+                      <ion-col class="ion-text-center">
+                        <div>
+                          <i class="fas fa-plug"></i>({{ item.id }})
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card>
                 </ion-col>
               </ion-row>
-            </ion-grid>
-          </ion-card-header >
-          <ion-card-content>
-            <ion-grid>
               <ion-row class="ion-align-items-center">
-                <ion-col>
-                  <ion-toggle [checked]="item.stato" [disabled]="item.busy" (ionChange)="onClickSwitch(item.id)"></ion-toggle>
-                  <ion-button (click)="onDeletingLed(item.id)" fill="outline" expand="block">
+                <ion-col size="6">
+                  <ion-button [color]="item.stato? 'primary':'medium'" [disabled]="item.busy" fill="outline" expand="block"  (click)="onClickSwitch(item.id)">
+                    <ion-icon name="power"></ion-icon>
+                  </ion-button>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-button [disabled]="item.busy"  fill="outline" expand="block"  (click)="onDeletingLed(item.id)">
                     <ion-icon name="trash"></ion-icon>
                   </ion-button>
                 </ion-col>
               </ion-row>
             </ion-grid>
-          </ion-card-content>
         </ion-card>
       </ion-col>
-      <ion-col offsetXs="1" sizeXs="10" sizeSm="6">
-        <ion-card button="true" class=" card-disp card-add" (click)="presentModal()">
+      <ion-col sizeXs="6" sizeSm="4" >
+        <ion-card button="true" class="std-card card-add" (click)="presentModal()">
           <ion-row class="ion-align-items-center">
             <ion-col class="ion-text-center">
               <ion-icon name="add"></ion-icon>

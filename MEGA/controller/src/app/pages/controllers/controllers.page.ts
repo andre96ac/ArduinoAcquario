@@ -17,6 +17,8 @@ export class ControllersPage implements OnInit {
 
   loadedConfig  = new ConfigModel;
   configChanged: Subscription;
+  deviceOn:boolean=false;
+  intervalBlinking;
 
   constructor(private dataService:DataService, private modalCtrl:ModalController, private alertCtrl:AlertController) { }
 
@@ -88,5 +90,17 @@ export class ControllersPage implements OnInit {
     setTimeout(()=>{
       event.target.complete()
     }, 1000);
+  }
+
+  ionViewDidEnter()
+  {
+    this.intervalBlinking=setInterval(()=>{
+      this.deviceOn=!this.deviceOn;
+    },2000)
+  }
+
+  ionViewDidLeave()
+  {
+    clearInterval(this.intervalBlinking);
   }
 }

@@ -41,9 +41,6 @@ export class DataService {
 
         //ed emetto l'evento di configurazione cambiata
         this.configChanged.next(this._config);
-
-
-
       });
      
   }
