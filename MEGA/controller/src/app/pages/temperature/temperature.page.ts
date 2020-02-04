@@ -16,15 +16,15 @@ export class TemperaturePage implements OnInit {
 
   loadedConfig: ConfigModel=new ConfigModel;
   configChanged: Subscription;
+  interval;
 
   constructor(private dataService:DataService, private modalCtrl: ModalController, private alertCtrl:AlertController) {
    }
 
   ngOnInit() {
     this.configChanged=this.dataService.configChanged.subscribe(newConfig=>{
-    this.loadedConfig=newConfig;
-    })
-
+    this.loadedConfig=newConfig;  
+  })
     this.dataService.getConfig();
   }
 
@@ -81,12 +81,19 @@ export class TemperaturePage implements OnInit {
     modal.present();
   }
 
-  refresh(event)
+  ionViewDidEnter()
   {
-    this.dataService.getConfig();
-    setTimeout(()=>{
-      event.target.complete()
-    }, 1000);
+    this.interval=setInterval(()=>{
+      if (this.loadedConfig.termometri.length!=0)
+      {
+        this.dataService.getConfig();
+      }
+    },2000)
   }
 
+ 
+  ionViewDidLeave()
+  {
+    clearInterval(this.interval);
+  }
 }

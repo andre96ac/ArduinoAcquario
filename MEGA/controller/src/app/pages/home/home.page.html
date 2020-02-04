@@ -34,7 +34,7 @@
               <ion-row class="ion-align-items-center">
                 <ion-col>
                   <ion-toggle [checked]="item.stato" [disabled]="item.busy" (ionChange)="onClickSwitch(item.id)"></ion-toggle>
-                  <ion-button (click)="onDeletingLed(item.id)" fill="outline" expand="block">
+                  <ion-button [disabled]="item.busy" (click)="onDeletingLed(item.id)" fill="outline" expand="block">
                     <ion-icon name="trash"></ion-icon>
                   </ion-button>
                 </ion-col>
