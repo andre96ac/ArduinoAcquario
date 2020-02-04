@@ -64,7 +64,11 @@ export class TimersPage implements OnInit {
 
     modal.onWillDismiss().then(data => {
       let newTemporizzatore : TemporizzatoreModel=data['data'];      
-      this.dataService.addTemporizzatore(newTemporizzatore);
+      if (newTemporizzatore)
+      {
+        this.dataService.addTemporizzatore(newTemporizzatore);
+
+      }
     })
 
     modal.present();

@@ -32,30 +32,14 @@ ion-content
     --background: linear-gradient(360deg, rgba(221,246,255,1) 0%, rgba(152,226,255,1) 84%, rgb(78, 205, 255) 100%);
 };
 
-.card-disp
+ion-card.std-card
 {
-    background-color: rgb(255,255,255);
-    background-color: rgba(32, 0, 146, 0.151);
-    box-shadow: none;
-    height: 100%;
+    background-color: rgba(255, 255, 255, 0.459);;
 }
 
-.card-disp >ion-card-header i, .card-disp >ion-card-header>ion-icon, .card-disp>ion-icon, .card-disp>ion-grid>ion-row>ion-col>i
+ion-card.std-card ion-card
 {
-    font-size: 35px;
-    padding: 5px;
-    
-    
-}
-.card-disp ion-label>p
-{
-    font-size: 20px;
-    color: #ffffff;
-}
-
-.card-disp  i
-{
-    color: #ffffff;
+    background-color: white;
 }
 
 
