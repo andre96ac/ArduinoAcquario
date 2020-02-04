@@ -10,8 +10,20 @@
 }
 
 
-.card-add ion-icon
+.md.card-add 
 {
-    font-size: 40px;
-    height: 132px;
+    ion-icon
+    {
+        font-size: 40px;
+        height: 132px;
+    }
+}
+
+.ios.card-add 
+{
+    ion-icon
+    {
+        font-size: 60px;
+        height: 168px;
+    }
 }

@@ -7,6 +7,7 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { AddPage } from './add/add.page';
 import { ProviderAst } from '@angular/compiler';
 import { Time } from '@angular/common';
+import { LedModel } from 'src/app/models/led.model';
 
 @Component({
   selector: 'app-timers',
@@ -87,5 +88,12 @@ export class TimersPage implements OnInit {
     setTimeout(()=>{
       event.target.complete()
     }, 1000);
+  }
+
+  findLed(id: number): LedModel
+  {
+    return this.loadedConfig.leds.find(elem=>{
+      return elem.id==id;
+    });
   }
 }

@@ -13,11 +13,11 @@
   </ion-refresher>
 <ion-grid>
   <ion-row>
-    <ion-col offset="1" size="10">
+    <ion-col offsetXs="1" sizeXs="10" offsetSm="0" sizeSm="6" sizeMd="4">
       <ion-card class="std-card" *ngFor="let item of loadedConfig.temporizzatori">
         <ion-grid>
           <ion-row >
-            <ion-col>
+            <ion-col size="7">
               <ion-card class="card-controller ion-no-margin">
                 <ion-grid>
                   <ion-row>
@@ -25,15 +25,15 @@
                       <ion-icon name="time"></ion-icon>
                     </ion-col>
                     <ion-col size="7">
-                      <p>{{ item.hacc }}.{{ item.minacc }}</p>
-                      <p>{{ item.hspegn }}.{{ item.minspegn }}</p>
+                      <p>{{ item.hacc }}:{{ item.minacc }}</p>
+                      <p>{{ item.hspegn }}:{{ item.minspegn }}</p>
                     </ion-col>
                   </ion-row>
                 </ion-grid>
               </ion-card>
             </ion-col>
-            <ion-col>
-              <ion-card class="card-device ion-no-margin">
+            <ion-col size="5">
+              <ion-card class="card-device ion-no-margin" [ngClass]="findLed(item.idled).stato? '' : 'device-off'">
                 <ion-grid>
                   <ion-row>
                     <ion-col class="ion-text-center">
@@ -46,23 +46,12 @@
           </ion-row>
           <ion-row>
             <ion-col>
-              
+              <ion-button fill="outline" expand="block" [color]="item.state? 'primary': 'medium'" (click)="onSwitch(item.id)">
+                <ion-icon name="power"></ion-icon>
+              </ion-button>
             </ion-col>
             <ion-col>
-              <!-- <ion-label>
-                <p>{{ item.hacc }}:{{ item.minacc }}</p>
-                <p>{{ item.hspegn }}:{{ item.minspegn }}</p>
-              </ion-label> -->
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-toggle [checked]="item.state" [disabled]="!isSwitchable(item)" (ionChange)="onSwitch(item.id)"></ion-toggle>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button fill="outline" expand="block" (click)="onDeleteElement(item.id)">
+              <ion-button fill="outline" expand="block"  (click)="onDeleteElement(item.id)">
                 <ion-icon name="trash"></ion-icon>
               </ion-button>
             </ion-col>
@@ -70,8 +59,8 @@
         </ion-grid>
       </ion-card>
     </ion-col>
-    <ion-col>
-      <ion-card class="card-disp card-add" button (click)="presentModal()">
+    <ion-col offsetXs="1" sizeXs="10" offsetSm="0" sizeSm="6" sizeMd="4">
+      <ion-card class="std-card card-add" button (click)="presentModal()">
         <ion-row class="ion-align-items-center">
           <ion-col class="ion-text-center">
             <ion-icon name="add"></ion-icon>

@@ -30,7 +30,16 @@
     color: rgba(0, 0, 0, 0.205);
 }
 
-.card-add
+.ios.card-add
+{
+    ion-icon
+    {
+        font-size: 60px;
+        height: 157px;
+    }
+}
+
+.md.card-add
 {
     ion-icon
     {

@@ -1,36 +1,35 @@
-.cardTemp ion-col>i
-{
-    font-size: 40px;
-}
 
 .cardTemp
 {
     background-color: white;
+    ion-col>i
+    {
+        font-size: 40px;
+    }
+    h1
+    {
+        font-size: 30px;
+    }
 }
-.cardTemp h1
-{
-    font-size: 30px;
 
-}
 
-.cardSet i
-{
-    font-size: 20px;
-}
-.cardSet ion-card
-{
-    padding-top: 5px;
-    padding-bottom:5px;
-}
+
+
 .cardSet
 {
-     background-color: white;
+    
+    background-color: white;
+    ion-card
+    {
+        padding-top: 5px;
+        padding-bottom:5px;
+    }
+    i
+    {
+        font-size: 20px;
+    }
 }
 
-.card
-{
-    background-color: rgba(255, 255, 255, 0.459);
-}
 
 .cardHeatingOn
 {
@@ -42,8 +41,21 @@
     color: rgba(0, 0, 0, 0.164);
 }
 
-.cardAdd ion-icon
+.md.cardAdd 
 {
-    font-size: 30px;
+    ion-icon
+    {
+        font-size: 40px;
+        height: 139px;
+    }
+}
+
+.ios.cardAdd 
+{
+    ion-icon
+    {
+        font-size: 60px;
+        height: 177px;
+    }
 }
 
