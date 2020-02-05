@@ -14,6 +14,7 @@
 #include "./Temporizzatore/Temporizzatore.cpp"
 #include "./Database/Database.cpp"
 #include "./Termometro/Termometro.cpp"
+#include "./Osmo/Osmo.cpp"
 
 
 //creo l'orologio
@@ -194,6 +195,27 @@ void loop()
     }
     else if (*(messaggio.returnComando())=="removetermometro")
       executionError=db.deleteTermometro(      messaggio.returnParams()[0]    );
+    else if (*(messaggio.returnComando())=="addosmo")
+    {
+      executionError=db.addOsmo(
+        ((messaggio.returnParams())[0]),
+        ((messaggio.returnParams())[1]),
+        ((messaggio.returnParams())[2]),
+        ((messaggio.returnParams())[3])
+      );
+    }
+    else if (*(messaggio.returnComando())=="changeosmostate")
+    {
+      executionError= db.changeOsmoState(
+        (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="removeosmo")
+    {
+      executionError= db.deleteOsmo(
+        (messaggio.returnParams()[0])
+      );
+    }
     else if(*(messaggio.returnComando())=="getconfig")
     {
       requestedConfig=true;

@@ -7,6 +7,7 @@
 #include "../LedController/LedController.h"
 #include "../Temporizzatore/Temporizzatore.h" 
 #include "../Termometro/Termometro.h"
+#include "../Osmo/Osmo.h"
 
 #include "../Const/Const.h"
 
@@ -18,6 +19,7 @@ class Database
     bool dPinsBusy[NDIGITALPIN];
     Temporizzatore *temporizzatori[NMAXCONTROLLERS];
     Termometro *termometri[NMAXCONTROLLERS];
+    Osmo *osmos[NMAXCONTROLLERS];
     RTC_DS1307 *pClock;
 
   public:
@@ -51,6 +53,11 @@ class Database
     bool changeTermometroState (int idTermometro);
     bool deleteTermometro(int id);
 
+
+    bool addOsmo (int id, byte normalSwitchPin, byte emergencySwitchPin, byte pinDevice);
+    byte osmoPosition (int id);
+    bool changeOsmoState (int id);
+    bool deleteOsmo (int id);
 
     //############################# FUNZIONE JSON, DA SCOMMENTARE SU NUOVA BOARD #####################
    

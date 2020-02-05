@@ -3,18 +3,18 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Users\\andre\\Documents\\Arduino\\libraries\\OneWire",
+                "C:\\Users\\andre\\Documents\\Arduino\\libraries\\MAX31850_OneWire",
                 "C:\\Users\\andre\\Documents\\Arduino\\libraries\\RTClib",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
-                "C:\\Users\\andre\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.2\\**",
-                "C:\\Users\\andre\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**"
+                "C:\\Program Files (x86)\\Arduino\\libraries\\**",
+                "C:\\Users\\andre\\AppData\\Local\\Arduino15\\**"
             ],
             "forcedInclude": [
                 "C:\\Users\\andre\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.2\\cores\\arduino\\Arduino.h",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
             ],
-            "compilerPath": "C:\\MinGW\\bin\\gcc.exe",
+            "compilerPath": "C:/MinGW/bin/g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++17"
         }

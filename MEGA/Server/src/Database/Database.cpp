@@ -21,6 +21,8 @@
       dPinsBusy[11]=1;
       dPinsBusy[12]=1;
       dPinsBusy[13]=1;
+      dPinsBusy[30]=0;
+      dPinsBusy[32]=0;
       
       pClock=clock;
   };
@@ -369,18 +371,85 @@
   }
 
 
+//################ FUNZIONI OSMO ##########################
+
+bool Database::addOsmo(int id, byte normalSwitchPin, byte emergencySwitchPin, byte pinDevice)
+{
+  bool error=true;
+  //se le due prese associate agli switch sono libere, e il led non è occupato
+  if ((!dPinsBusy[normalSwitchPin]&&!dPinsBusy[emergencySwitchPin])&&(!leds[ledPosition(pinDevice)]->isBusy()))
+  {
+    //scorri l'array di osmos
+    for (int i=0; i<NMAXCONTROLLERS; i++)
+    {
+      //se trovi una posizione libera
+      if (osmos[i]==NULL)
+      {
+        //crea un nuovo osmo nella posizione trovata, e setta l'errore a false
+        osmos[i]=new Osmo(id, leds[ledPosition(pinDevice)], normalSwitchPin, emergencySwitchPin );
+        dPinsBusy[normalSwitchPin]=true;
+        dPinsBusy[emergencySwitchPin]=true;
+        error=false;
+        Serial.println(osmos[0]->getConfig()->id);
+        break;
+      }
+    }
+  }
+  return error;
+}
+
+/**La funzione restituisce l'indice del device all'interno del vettore. se il device non è trovato, restituisce -1 */
+byte Database::osmoPosition(int id)
+{
+  int posizione=-1;
+  for (int i=0; i<NMAXCONTROLLERS; i++)
+  {
+    if (osmos[i]->getConfig()->id==id)
+    {
+      posizione=i;
+      break;
+    }
+  }
+  return posizione;
+}
+
+bool Database:: changeOsmoState (int id)
+{
+  bool error=true;
+  if (osmoPosition(id)>=0)
+  {
+    osmos[osmoPosition(id)]->changeState();
+    error=false;
+  }
+  return error;
+}
+
+bool Database:: deleteOsmo(int id)
+{
+  bool error=true;
+  if (osmoPosition(id)>=0)
+  {
+    dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch1Pin]=false;
+    dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch2Pin]=false;      
+    delete osmos[osmoPosition(id)];
+  }
+  return error;
+}
+
+  
+
 //################ FUNZIONI GENERALI ######################
 
   void Database::sendConfiguration(EthernetClient *client)
   {
     //creo il json
     StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
-    //creo il campo temperatura ed assegno un valore di test
-    JsonArray jsonLeds=jsonDocument.createNestedArray("leds");
     JsonArray jsonDPinBusy=jsonDocument.createNestedArray("dpinbusy");
+    JsonArray jsonLeds=jsonDocument.createNestedArray("leds");
     JsonArray jsonControllers=jsonDocument.createNestedArray("controllers");
     JsonArray jsonTemporizzatori=jsonDocument.createNestedArray("temporizzatori");
     JsonArray jsonTermometri=jsonDocument.createNestedArray("termometri");
+    JsonArray jsonOsmos=jsonDocument.createNestedArray("osmos");
 
     //scorro l'array dpinbusy
     for (int i=0; i<NDIGITALPIN; i++)
@@ -401,7 +470,7 @@
         jsonLed["busy"]=leds[i]->isBusy();
       }
     }
-    //scorro l'array di controllers, temporizzatori e termometri
+    //scorro l'array di controllers, temporizzatori, termometri ed osmoregolatori
     for (int i=0; i<NMAXCONTROLLERS; i++)
     {
       //se c'è un controller
@@ -451,6 +520,18 @@
           }
         }
       }
+      Serial.println(osmos[0]->getConfig()->id);
+      if (osmos[i]!=NULL)
+      {
+        JsonObject jsonOsmo=jsonOsmos.createNestedObject();
+        jsonOsmo["id"]=osmos[i]->getConfig()->id;
+        jsonOsmo["idled"]=osmos[i]->getConfig()->pL->returnPin();
+        jsonOsmo["idSwitch1"]=osmos[i]->getConfig()->switch1Pin;
+        jsonOsmo["idSwitch2"]=osmos[i]->getConfig()->switch2Pin;
+        jsonOsmo["stateSwitch1"]=osmos[i]->getConfig()->switch1State;
+        jsonOsmo["stateSwitch2"]=osmos[i]->getConfig()->switch2State;
+        jsonOsmo["state"]=osmos[i]->getConfig()->osmoState;
+      }
     }
     //ora che il json è pronto, lo spedisco al client
     serializeJson(jsonDocument, *client);
@@ -472,6 +553,10 @@
       //faccio funzionare tutti i termometri
       if (termometri[i]!=NULL)
         termometri[i]->esegui();
+      //
+      //faccio funzionare tutti gli osmo
+      if (osmos[i]!=NULL)
+        osmos[i]->ceckLevel();
       //
     }  
   };
