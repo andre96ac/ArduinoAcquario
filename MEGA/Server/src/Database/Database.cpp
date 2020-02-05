@@ -432,6 +432,7 @@ bool Database:: deleteOsmo(int id)
     dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch1Pin]=false;
     dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch2Pin]=false;      
     delete osmos[osmoPosition(id)];
+    error=false;
   }
   return error;
 }
