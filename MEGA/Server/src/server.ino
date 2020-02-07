@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <avr/wdt.h>
 
 #include "./Const/Const.h"
 #include "./CommonFunc/CommonFunc.cpp"
@@ -19,9 +20,7 @@
 
 //creo l'orologio
 RTC_DS1307 orologio;
-// Mac Address di Arduino
-byte mac[] = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-byte ip[] = {192, 168, 1, 3};
+
  
 // Viene inizializzata la libreria Ethernet di Arduino e il webserver gira sulla porta 80
 EthernetServer server(PORT);
@@ -30,11 +29,16 @@ Database db(&orologio);
 
 void setup() 
 {
+  //se l'ho impostato, attiva il watchdog
+  if (WATCHDOG_ENABLED)
+    wdt_enable(WDTO_8S);
+  //
+
   //effettue le inizializzazioni
   Serial.begin(9600);
   Wire.begin();
   orologio.begin();
-  Ethernet.begin(mac, ip);
+  Ethernet.begin(MAC, IP);
   server.begin();
 
   //avvisami se l'orologio non sta funzionando
@@ -43,14 +47,15 @@ void setup()
     Serial.println(F("RTC is NOT running!"));
   }
 
+
   //setto l'orologio all'ora di compilazione
-  orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  Serial.print("Clock set at: ");
-  Serial.print(orologio.now().hour());
-  Serial.print(":");
-  Serial.print(orologio.now().minute());
-  Serial.print(":");
-  Serial.println(orologio.now().minute());
+  //orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // Serial.print("Clock set at: ");
+  // Serial.print(orologio.now().hour());
+  // Serial.print(":");
+  // Serial.print(orologio.now().minute());
+  // Serial.print(":");
+  // Serial.println(orologio.now().minute());
   Serial.print(F("Server is at "));
   Serial.println(Ethernet.localIP());
   Serial.print(F("Free RAM at start: "));
@@ -275,4 +280,5 @@ void loop()
     Serial.println(F("client disconnected"));
   }
   db.executeTimingFunctions();
+  wdt_reset();
 }

@@ -57,7 +57,7 @@
     
     void LedController::lampeggia()
     {
-      if ((millis()>=(time+deltaTime))&&(state==ACCESO))
+      if (((millis()-deltaTime)>=time)&&(state==ACCESO))
       {
         pL1->cambiaStato();
         pL2->cambiaStato();
