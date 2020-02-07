@@ -18,6 +18,12 @@
 ?removetermometro&id
 ?changetermometrostate&id
 
+?addosmo&id&normalSwitchPin&emergencySwitchPin&pinDevice*
+?removeosmo&id*
+?changeosmostate&id*
+
+?setclock&year&month&day&hour&minute*
+
 
 
 

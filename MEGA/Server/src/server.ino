@@ -110,13 +110,16 @@ void loop()
     //esecuzione pratica dell'azione richiesta 
     if ((*(messaggio.returnComando()))=="switch")
       executionError=db.cambiaStatoLed((messaggio.returnParams())[0]);
+    //
     else if ((*(messaggio.returnComando()))=="addled")
       executionError=db.addLed(
         (messaggio.returnParams())[0],
         (messaggio.returnParams())[1]
         );
+    //
     else if ((*(messaggio.returnComando()))=="removeled")
       executionError=db.removeLed((messaggio.returnParams())[0]);
+    //
     else if ((*(messaggio.returnComando()))=="addcontroller")
     {
       executionError=db.addController(
@@ -131,7 +134,8 @@ void loop()
       executionError = db.changeControllerState(messaggio.returnParams()[0]);
     } 
     else if ((*(messaggio.returnComando()))=="removecontroller")
-      executionError=db.deletController(messaggio.returnParams()[0]);//manca gestione errori
+      executionError=db.deletController(messaggio.returnParams()[0]);
+    //
     else if ((*(messaggio.returnComando()))=="addtemporizzatore")
     {
         db.addTemporizzatore(//manca gestione errori
@@ -200,6 +204,7 @@ void loop()
     }
     else if (*(messaggio.returnComando())=="removetermometro")
       executionError=db.deleteTermometro(      messaggio.returnParams()[0]    );
+    //
     else if (*(messaggio.returnComando())=="addosmo")
     {
       executionError=db.addOsmo(
@@ -219,6 +224,16 @@ void loop()
     {
       executionError= db.deleteOsmo(
         (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="setclock")
+    {
+      db.setClock(
+          ((messaggio.returnParams())[0]),
+          ((messaggio.returnParams())[1]),
+          ((messaggio.returnParams())[2]),
+          ((messaggio.returnParams())[3]),
+          ((messaggio.returnParams())[4])
       );
     }
     else if(*(messaggio.returnComando())=="getconfig")
@@ -249,7 +264,7 @@ void loop()
       client.println();
       client.println(F("Errore interno, impossibile portare a termine l'operazione"));      
     }
-    else//altrimenti, se è tutto ok
+    else //altrimenti, se è tutto ok
     {
       //se è stata richiesta la configurazione
       if (requestedConfig)
@@ -264,12 +279,11 @@ void loop()
         db.sendConfiguration(&client);
         requestedConfig=false;
       }
-      else//altrimenti
+      else //altrimenti
       {
         //mando solo risposta OK
         client.println(F("HTTP/1.1 200 OK"));
         client.println(F("Content-Type: text/html"));
-        // client.println(F("Access-Control-Allow-Origin: http://localhost:8100"));
         client.println(F("Access-Control-Allow-Origin: *"));
         client.println(); 
         client.println(F("Operazione eseguita"));
