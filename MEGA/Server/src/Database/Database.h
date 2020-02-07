@@ -64,6 +64,7 @@ class Database
 
     void sendConfiguration(EthernetClient *client);
     void executeTimingFunctions();
+    void setClock(byte year, byte month, byte day, byte hour, byte minute);
 
 };
 

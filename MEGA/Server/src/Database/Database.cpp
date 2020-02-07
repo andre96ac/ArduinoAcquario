@@ -445,12 +445,24 @@ bool Database:: deleteOsmo(int id)
   {
     //creo il json
     StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
-    JsonArray jsonDPinBusy=jsonDocument.createNestedArray("dpinbusy");
+    JsonObject jsonSystemTime=jsonDocument.createNestedObject("systemtime");
     JsonArray jsonLeds=jsonDocument.createNestedArray("leds");
     JsonArray jsonControllers=jsonDocument.createNestedArray("controllers");
     JsonArray jsonTemporizzatori=jsonDocument.createNestedArray("temporizzatori");
     JsonArray jsonTermometri=jsonDocument.createNestedArray("termometri");
     JsonArray jsonOsmos=jsonDocument.createNestedArray("osmos");
+    JsonArray jsonDPinBusy=jsonDocument.createNestedArray("dpinbusy");
+
+    //recupero data ed ora di sistema e la inserisco nel json
+    DateTime now=pClock->now();
+    jsonSystemTime["year"]=now.year();
+    jsonSystemTime["month"]=now.month();
+    jsonSystemTime["day"]=now.day();
+    jsonSystemTime["hour"]=now.hour();
+    jsonSystemTime["minute"]=now.minute();
+    jsonSystemTime["second"]=now.second();
+
+
 
     //scorro l'array dpinbusy
     for (int i=0; i<NDIGITALPIN; i++)
@@ -561,5 +573,13 @@ bool Database:: deleteOsmo(int id)
       //
     }  
   };
+
+  void Database::setClock(byte year, byte month, byte day, byte hour, byte minute)
+  {
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+
+    pClock->adjust(DateTime(year, month, day, hour, minute, 0));
+  }
 
 

@@ -21,12 +21,13 @@ const byte IP[] = {192, 168, 1, 3}; //ip di arduino
 
 //dimensione del json di configurazione
 const int CONFIGJSONSIZE=(
-                            JSON_OBJECT_SIZE(6)
-                            +JSON_ARRAY_SIZE(NDIGITALPIN)
-                            +4*JSON_ARRAY_SIZE(NMAXCONTROLLERS)
-                            +JSON_ARRAY_SIZE(NMAXLED)
-                            +NMAXLED*JSON_OBJECT_SIZE(3)
-                            +NMAXCONTROLLERS*JSON_OBJECT_SIZE(5)
+                            JSON_OBJECT_SIZE(7) //oggetto generale
+                            +JSON_OBJECT_SIZE(6) //oggetto contenente data ed ora di sistema
+                            +JSON_ARRAY_SIZE(NDIGITALPIN) //array delle prese libere/occupate
+                            +4*JSON_ARRAY_SIZE(NMAXCONTROLLERS) //i 4 array che contengono gli oggetti controller
+                            +JSON_ARRAY_SIZE(NMAXLED) //l'array che contiene gli oggetti device
+                            +NMAXLED*JSON_OBJECT_SIZE(3) //i gli oggetti led
+                            +NMAXCONTROLLERS*JSON_OBJECT_SIZE(5) 
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
