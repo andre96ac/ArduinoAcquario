@@ -553,6 +553,14 @@ bool Database:: deleteOsmo(int id)
     return jsonDocument;
   };
 
+  //######################################### QUI BISOGNA IMPLEMENTARE IL BINDING
+  void Database::loadFromFile(File file)
+  {
+    StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
+    deserializeJson(jsonDocument, file);
+    serializeJson(jsonDocument, Serial);
+  }
+
   void Database::executeTimingFunctions()
   {
     for (int i=0; i<NMAXCONTROLLERS; i++)

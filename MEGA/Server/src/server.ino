@@ -5,6 +5,8 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <avr/wdt.h>
+#include <EEPROM.h>
+#include <SD.h>
 
 #include "./Const/Const.h"
 #include "./CommonFunc/CommonFunc.cpp"
@@ -17,15 +19,15 @@
 #include "./Termometro/Termometro.cpp"
 #include "./Osmo/Osmo.cpp"
 
-
-//creo l'orologio
+//creo l'orologio di sistema
 RTC_DS1307 orologio;
-
  
 // Viene inizializzata la libreria Ethernet di Arduino e il webserver gira sulla porta 80
 EthernetServer server(PORT);
 
 Database db(&orologio);
+
+File configFile;
 
 void setup() 
 {
@@ -40,6 +42,7 @@ void setup()
   orologio.begin();
   Ethernet.begin(MAC, IP);
   server.begin();
+  SD.begin(PIN_SD);
 
   //avvisami se l'orologio non sta funzionando
   if (! orologio.isrunning()) 
@@ -47,19 +50,42 @@ void setup()
     Serial.println(F("RTC is NOT running!"));
   }
 
-
-  //setto l'orologio all'ora di compilazione
-  //orologio.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // Serial.print("Clock set at: ");
-  // Serial.print(orologio.now().hour());
-  // Serial.print(":");
-  // Serial.print(orologio.now().minute());
-  // Serial.print(":");
-  // Serial.println(orologio.now().minute());
+  Serial.println(F("############ WELCOME TO ARDUINOACQUARIO!! :) #############"));
+  Serial.println();
   Serial.print(F("Server is at "));
   Serial.println(Ethernet.localIP());
   Serial.print(F("Free RAM at start: "));
   Serial.println(freeRam());
+
+  //se c'è una sd funzionante
+  if (SD.begin(PIN_SD))
+  {
+    Serial.println(F("SD rilevata"));
+    //leggo il contatore del numero di reset
+    const byte RESET_COUNT=EEPROM.read(RESET_COUNT_ADDRESS);
+    if (RESET_COUNT>=N_MAX_RESET)
+    {
+      //riavvio, non carico i dati e ma resetto il contatore
+      Serial.println(F("Reset completato"));
+      EEPROM.write(RESET_COUNT_ADDRESS,0);
+      //qui dovrò anche eliminare il file e ricrearlo
+    }
+    else
+    {
+      //riavvio caricando i dati, ed incremento il contatore
+      Serial.println(F("Tentativo di ripristino della configurazione"));
+      EEPROM.write(RESET_COUNT_ADDRESS, RESET_COUNT+1);
+      configFile=SD.open(("config.txt", FILE_READ));
+      db.loadFromFile(configFile);
+    }
+  }
+  else
+  {
+    Serial.println(F("SD non rilevata... Reset completato"));
+    EEPROM.write(RESET_COUNT_ADDRESS,0);
+  }
+  
+  
 }
  
 void loop() 
@@ -282,6 +308,13 @@ void loop()
         Serial.print("Free RAM now: ");
         Serial.println(freeRam());
 
+        //TESTME##########################################################################################
+        //salvo il json su sd
+        if (SD.open("config.txt",FILE_WRITE))
+        {
+          configFile=SD.open("config.txt",FILE_WRITE);
+          serializeJson(db.prepareJson(), configFile);
+        }
       }
       else //altrimenti
       {

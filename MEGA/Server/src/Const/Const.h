@@ -14,6 +14,9 @@
 #define NMAXCONTROLLERS 5
 #define MAX_REFLOW_MILLIS 10000
 #define WATCHDOG_ENABLED false
+#define RESET_COUNT_ADDRESS 1
+#define N_MAX_RESET 2
+#define PIN_SD 10
 
 //parametri di rete
 #define PORT 11111 //porta del server
