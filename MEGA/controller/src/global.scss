@@ -34,13 +34,13 @@ ion-content
 
 ion-card.std-card
 {
-    background-color: rgba(255, 255, 255, 0.459);;
+    background-color: rgba(255, 255, 255, 0.459);
+    ion-card
+    {
+        background-color: white;
+    }
 }
 
-ion-card.std-card ion-card
-{
-    background-color: white;
-}
 
 
 

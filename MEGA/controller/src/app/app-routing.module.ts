@@ -24,6 +24,10 @@ const routes: Routes = [
     path: 'config',
     loadChildren: () => import('./pages/config/config.module').then( m => m.ConfigPageModule)
   },
+  {
+    path: 'osmo',
+    loadChildren: () => import('./pages/osmo/osmo.module').then( m => m.OsmoPageModule)
+  },
 ];
 
 @NgModule({

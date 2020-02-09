@@ -8,6 +8,7 @@ import { LocalService } from './local.service'
 
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs'
+import { OsmoModel } from '../models/osmo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,12 +33,17 @@ export class DataService {
         this._config.temporizzatori=data['temporizzatori'];
         this._config.termometri=data['termometri'];
         this._config.dpinbusy=data['dpinbusy'];
+        this._config.osmo=data['osmos'];
+        this._config.systemtime=data['systemtime']
 
         //riordino gli elementi
         this._config.leds.sort((a, b)=> a.id-b.id);
         this._config.controllers.sort((a,b)=>a.id-b.id);
         this._config.temporizzatori.sort((a,b)=>a.id-b.id);
         this._config.termometri.sort((a,b)=> a.id-b.id);
+        this._config.osmo.sort((a,b)=>a.id-b.id);
+
+        console.log(this._config);
 
         //ed emetto l'evento di configurazione cambiata
         this.configChanged.next(this._config);
@@ -239,6 +245,45 @@ export class DataService {
     })
   }  
 
+
+  addOsmo (item:OsmoModel)
+  {
+    this.httpClient.get<any>(
+      (this.localService.myUrl+'addosmo&'+item.id+'&'+item.idSwitch1+'&'+item.idSwitch2+'&'+item.idled+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status);
+        this.getConfig();
+      });
+  }
+
+  changeOsmoState(id: number)
+  {
+    this.httpClient.get<any>(
+      (this.localService.myUrl+'changeosmostate&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status);
+        this.getConfig();
+      });
+  }
+
+  removeOsmo (id: number)
+  {
+    this.httpClient.get<any>(
+      (this.localService.myUrl+'removeosmo&'+id+'*'), {
+        observe:'response',
+        responseType: 'text' as 'json'
+      })
+      .subscribe(risposta => {
+        console.log(risposta.status);
+        this.getConfig();
+      });
+  }
 
   
  /* //Gestisce gli errori di risposta

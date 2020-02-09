@@ -55,7 +55,7 @@ class Database
 
 
     bool addOsmo (int id, byte normalSwitchPin, byte emergencySwitchPin, byte pinDevice);
-    byte osmoPosition (int id);
+    int osmoPosition (int id);
     bool changeOsmoState (int id);
     bool deleteOsmo (int id);
 

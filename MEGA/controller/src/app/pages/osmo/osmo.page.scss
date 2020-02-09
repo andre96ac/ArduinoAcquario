@@ -1,0 +1,70 @@
+
+.card-stato
+{
+    ion-row
+    {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    div.indicator
+    {
+        margin-top: 4px;
+        margin-left: 6px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50px;
+        border-width: 2px;
+        border-style: solid;
+    }
+    ion-icon
+    {
+        font-size: 25px;
+    }
+    .rosso
+    {
+        background: rgb(255,112,0);
+        background: radial-gradient(circle, rgba(255,112,0,1) 0%, rgba(218,0,0,1) 100%); 
+    }
+    .giallo
+    {
+        background: rgb(255,236,0);
+        background: radial-gradient(circle, rgba(255,236,0,1) 0%, rgba(255,176,0,1) 100%); 
+    }
+    .verde
+    {
+        background: rgb(141,255,0);
+        background: radial-gradient(circle, rgba(141,255,0,1) 0%, rgba(7,205,3,1) 100%); 
+    }    
+}
+
+.card-sensor
+{
+    ion-icon
+    {
+        font-size: 50px;
+    }
+}
+
+.std-card
+{
+    ion-button
+    {
+        height:34px;
+    }
+}
+
+.card-add
+{
+    
+    ion-icon.md
+    {
+        font-size: 40px;
+        height: 202px;
+    }
+    ion-icon.ios
+    {
+        font-size: 60px;
+        height: 229px;
+    }
+
+}

@@ -390,7 +390,6 @@ bool Database::addOsmo(int id, byte normalSwitchPin, byte emergencySwitchPin, by
         dPinsBusy[normalSwitchPin]=true;
         dPinsBusy[emergencySwitchPin]=true;
         error=false;
-        Serial.println(osmos[0]->getConfig()->id);
         break;
       }
     }
@@ -399,15 +398,18 @@ bool Database::addOsmo(int id, byte normalSwitchPin, byte emergencySwitchPin, by
 }
 
 /**La funzione restituisce l'indice del device all'interno del vettore. se il device non è trovato, restituisce -1 */
-byte Database::osmoPosition(int id)
+int Database::osmoPosition(int id)
 {
   int posizione=-1;
   for (int i=0; i<NMAXCONTROLLERS; i++)
   {
-    if (osmos[i]->getConfig()->id==id)
+    if (osmos[i]!=NULL)
     {
-      posizione=i;
-      break;
+      if (osmos[i]->getConfig()->id==id)
+      {
+        posizione=i;
+        break;
+      }
     }
   }
   return posizione;
@@ -427,11 +429,13 @@ bool Database:: changeOsmoState (int id)
 bool Database:: deleteOsmo(int id)
 {
   bool error=true;
-  if (osmoPosition(id)>=0)
+  int posizione = osmoPosition(id);
+  if (posizione>=0)
   {
-    dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch1Pin]=false;
-    dPinsBusy[osmos[osmoPosition(id)]->getConfig()->switch2Pin]=false;      
-    delete osmos[osmoPosition(id)];
+    dPinsBusy[osmos[posizione]->getConfig()->switch1Pin]=false;
+    dPinsBusy[osmos[posizione]->getConfig()->switch2Pin]=false;      
+    delete osmos[posizione];
+    osmos[posizione]=NULL;
     error=false;
   }
   return error;
@@ -533,7 +537,6 @@ bool Database:: deleteOsmo(int id)
           }
         }
       }
-      Serial.println(osmos[0]->getConfig()->id);
       if (osmos[i]!=NULL)
       {
         JsonObject jsonOsmo=jsonOsmos.createNestedObject();
