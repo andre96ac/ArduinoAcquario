@@ -5,6 +5,8 @@ import { DataService } from 'src/app/services/data.service';
 import { OsmoModel } from 'src/app/models/osmo.model';
 import { RunningType } from 'src/app/models/osmo.model'
 import { LedModel } from 'src/app/models/led.model';
+import { AlertController, ModalController } from '@ionic/angular';
+import { AddPage } from './add/add.page';
 
 
 @Component({
@@ -19,7 +21,11 @@ export class OsmoPage implements OnInit {
   loadedConfig: ConfigModel = new ConfigModel;
   configChanged: Subscription;
 
-  constructor(private dataService: DataService ) { }
+  constructor(
+    private dataService: DataService,
+    private alertCtrl:AlertController,
+    private modalCtrl:ModalController
+     ) { }
 
   ngOnInit() {
     this.configChanged=this.dataService.configChanged.subscribe(newConfig =>{
@@ -32,7 +38,6 @@ export class OsmoPage implements OnInit {
   {
     if(osmo.state)
     {
-      className : String
       if (osmo.stateSwitch1&&osmo.stateSwitch2)
       {
         return RunningType.REFLOW;
@@ -41,11 +46,14 @@ export class OsmoPage implements OnInit {
       {
         return RunningType.LEVEL_OK;
       }
-      else if (!osmo.stateSwitch1&&!osmo.stateSwitch2)
+      else if (!osmo.stateSwitch2)
       {
-        console.log ('bp');
         return RunningType.EMERGENCY;
       }
+    }
+    else if (osmo.emptyError)
+    {
+      return RunningType.EMPTY;
     }
     else
     {
@@ -53,14 +61,55 @@ export class OsmoPage implements OnInit {
     }
   }
 
-  onClickRemove(osmo: OsmoModel)
-  {
-    this.dataService.removeOsmo(osmo.id);
-  }
-
   onClickSwitch(osmo : OsmoModel)
   {
     this.dataService.changeOsmoState(osmo.id);
+  }
+
+
+  refresh(event)
+  {
+    this.dataService.getConfig();
+    setTimeout(()=>{
+      event.target.complete()
+    }, 1000);
+  }
+
+  async onDeleteElement(osmo: OsmoModel)
+  {
+      const alert= await this.alertCtrl.create({
+      header:'Conferma',
+      message: 'Desideri rimuovere il controller?',
+      buttons: [
+        {
+          text: 'Conferma',
+          handler: ()=>{
+            this.dataService.removeOsmo(osmo.id);
+          }
+        },
+        {
+          text: 'Annulla',
+          handler:()=>{}
+        }
+      ]
+    });
+
+    alert.present();
+  }
+
+  presentModalAdd()
+  {
+    this.modalCtrl.create({
+      component:AddPage,
+      componentProps:{data:this.loadedConfig},
+    }).then(modal=>{
+      modal.onDidDismiss().then(data=>{
+        let newOsmo:OsmoModel=data['data']
+        if (newOsmo!=null)
+          {this.dataService.addOsmo(newOsmo)}
+      });
+      modal.present();
+      })
   }
 
 }

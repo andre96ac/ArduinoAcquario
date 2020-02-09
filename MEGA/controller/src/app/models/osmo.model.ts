@@ -7,6 +7,7 @@ export class OsmoModel
     stateSwitch1: boolean;
     stateSwitch2: boolean;
     state: boolean;
+    emptyError: boolean;
 
 };
 

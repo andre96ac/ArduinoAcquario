@@ -6,7 +6,11 @@
     <ion-title>Gestione Livello</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
+  <ion-refresher slot="fixed" close-duration="300ms" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row>
       <ion-col sizeXs="10" sizeSm="6" offsetSm="0" offsetXs="1">
@@ -51,34 +55,52 @@
                   </ion-grid>
                 </ion-card>
               </ion-col>
-              <ion-col>
-                <ion-card class="card-sensor ion-no-padding">
-                  <ion-grid class="ion-no-padding">
-                    <ion-row>
-                      <ion-col size="6" class="ion-no-padding" >
-                        <ion-icon src="/assets/sensor.svg"></ion-icon>
-                        <h2 class="ion-no-margin ion-text-center">{{ item.idSwitch1 }}</h2>
-                      </ion-col>
-                      <ion-col size="6" class="ion-no-padding">
-                        <ion-icon src="/assets/sensor.svg"></ion-icon>
-                        <h2 class="ion-no-margin ion-text-center">{{ item.idSwitch2 }}</h2>
-                      </ion-col>
-                    </ion-row>
-                  </ion-grid>
-                </ion-card>
-                <ion-button fill="outline"  expand="block" [color]="item.state? 'primary': 'medium'" (click)="onClickSwitch(item)">
-                  <ion-icon name="power"></ion-icon>
-                </ion-button>
-                <ion-button fill="outline" expand="block" (click)="onClickRemove(item)">
-                  <ion-icon name="trash"></ion-icon>
-                </ion-button>
+              <ion-col class="ion-align-self-center">
+                <ion-row>
+                  <ion-col size="7" >
+                    <ion-card class=" card-sensor ion-no-margin">
+                      <ion-row>
+                        <ion-col size="6">
+                          <ion-icon src="/assets/sensor.svg"></ion-icon>
+                        </ion-col>
+                        <ion-col size="6">
+                          <p class="ion-no-margin ion-text-center">{{ item.idSwitch1 }}</p>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row>
+                        <ion-col size="6">
+                          <ion-icon src="/assets/sensor.svg"></ion-icon>
+                        </ion-col>
+                        <ion-col size="6">
+                          <p class="ion-no-margin ion-text-center">{{ item.idSwitch2 }}</p>
+                        </ion-col>
+                      </ion-row>
+                    </ion-card>
+                  </ion-col>
+                  <ion-col size="5">
+                    <ion-card class="ion-text-center ion-no-margin card-device">
+                      <ion-icon src="/assets/pump.svg"></ion-icon>
+                      <p>{{ item.idled }}</p>
+                    </ion-card>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-button  fill="outline"  expand="block" [color]="item.state? 'primary': 'medium'" (click)="onClickSwitch(item)">
+                      <ion-icon name="power"></ion-icon>
+                    </ion-button>
+                    <ion-button  fill="outline" expand="block" (click)="onDeleteElement(item)">
+                      <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
               </ion-col>
             </ion-row>
           </ion-grid>
         </ion-card>
       </ion-col>
       <ion-col sizeXs="10" sizeSm="6" offsetSm="0" offsetXs="1">
-        <ion-card button class="std-card card-add ion-text-center">
+        <ion-card button class="std-card card-add ion-text-center" (click)="presentModalAdd()">
           <ion-icon name="add"></ion-icon>
         </ion-card>
       </ion-col>

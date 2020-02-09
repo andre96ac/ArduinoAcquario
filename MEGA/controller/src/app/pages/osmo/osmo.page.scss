@@ -1,6 +1,10 @@
 
 .card-stato
 {
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     ion-row
     {
         padding-top: 5px;
@@ -41,7 +45,25 @@
 {
     ion-icon
     {
-        font-size: 50px;
+        font-size: 60px;
+        width: 30px;
+        height: 15px;
+    }
+}
+
+.card-device
+{
+    padding-top: 9px ;
+    padding-bottom: 8px ;
+    ion-icon
+    {
+        font-size: 45px;
+        height: 19px;
+        width: 33px;
+    }
+    p
+    {
+        margin: 0px;
     }
 }
 
@@ -49,7 +71,8 @@
 {
     ion-button
     {
-        height:34px;
+        margin-left: 0px;
+        margin-right: 0px;
     }
 }
 

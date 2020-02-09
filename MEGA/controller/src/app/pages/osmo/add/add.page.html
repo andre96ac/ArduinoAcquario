@@ -1,9 +1,48 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>add</ion-title>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Aggiungi Osmoregolatore</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <form [formGroup]="form" >
+    <ion-list>
+        <ion-item>
+          <ion-label position="floating">Identificativo</ion-label>
+          <ion-input type="number"  formControlName="id"></ion-input>
+        </ion-item>
+        <ion-item >
+          <ion-label position="floating">Dispositivo:</ion-label>
+          <ion-select  formControlName="idDevice" >
+            <ion-select-option *ngFor="let led of loadedConfig.leds" [value]="led.id" [disabled]="led.busy">
+              Dispositivo  {{ led.id }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Presa Interruttore Galleggiante</ion-label>
+          <ion-select  formControlName="idSwitch1" >
+            <ion-select-option *ngFor="let busy of loadedConfig.dpinbusy; let c = index" [value]="c" [disabled]="busy">
+              Presa  {{ c }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Presa Interruttore Emergenza</ion-label>
+          <ion-select  formControlName="idSwitch2" >
+            <ion-select-option *ngFor="let busy of loadedConfig.dpinbusy; let c = index" [value]="c" [disabled]="busy">
+              Presa  {{ c }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>      
+  </form>
+  <ion-button fill="outline" expand="block" [disabled]="!form.valid" (click)="submit()">
+    Conferma
+  </ion-button>
 </ion-content>
