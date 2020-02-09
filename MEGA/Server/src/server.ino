@@ -276,8 +276,12 @@ void loop()
         client.println(F("Access-Control-Allow-Origin: *"));
         client.println(); 
         //mando il json
-        db.sendConfiguration(&client);
-        requestedConfig=false;
+        serializeJson(db.prepareJson(), client);
+        requestedConfig=false; 
+        //stampo la quantità di ram rimasta
+        Serial.print("Free RAM now: ");
+        Serial.println(freeRam());
+
       }
       else //altrimenti
       {

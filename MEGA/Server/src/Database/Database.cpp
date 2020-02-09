@@ -445,7 +445,7 @@ bool Database:: deleteOsmo(int id)
 
 //################ FUNZIONI GENERALI ######################
 
-  void Database::sendConfiguration(EthernetClient *client)
+  StaticJsonDocument<CONFIGJSONSIZE> Database::prepareJson()
   {
     //creo il json
     StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
@@ -550,9 +550,7 @@ bool Database:: deleteOsmo(int id)
         jsonOsmo["emptyError"]=osmos[i]->getConfig()->emptyError;
       }
     }
-    //ora che il json è pronto, lo spedisco al client
-    serializeJson(jsonDocument, *client);
-    serializeJson(jsonDocument, Serial);
+    return jsonDocument;
   };
 
   void Database::executeTimingFunctions()

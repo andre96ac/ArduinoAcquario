@@ -120,7 +120,6 @@ int Termometro::getDelta()
 void Termometro::esegui() 
 {
     readSensor();
-    Serial.println(temperature);
     if (_state==ACCESO)
     {
         if (type==TERMOSTATO)

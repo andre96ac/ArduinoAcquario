@@ -58,11 +58,9 @@ class Database
     int osmoPosition (int id);
     bool changeOsmoState (int id);
     bool deleteOsmo (int id);
+       
 
-    //############################# FUNZIONE JSON, DA SCOMMENTARE SU NUOVA BOARD #####################
-   
-
-    void sendConfiguration(EthernetClient *client);
+    StaticJsonDocument<CONFIGJSONSIZE> Database::prepareJson();
     void executeTimingFunctions();
     void setClock(byte year, byte month, byte day, byte hour, byte minute);
 

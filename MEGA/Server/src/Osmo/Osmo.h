@@ -21,6 +21,7 @@ class Osmo
         byte switch1Pin, switch2Pin;
         bool osmoState, switch1State, switch2State, emptyError;
         long int reflowStartTime;
+        OsmoConfig* config;
     public: 
         Osmo(int identificativo, Led *led, byte normalSwitch, byte emergencySwitch);
 

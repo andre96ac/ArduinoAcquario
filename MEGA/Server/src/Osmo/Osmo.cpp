@@ -14,6 +14,7 @@
         osmoState=SPENTO;
         emptyError=false;
         reflowStartTime=0;
+        config=new OsmoConfig;
     };
 
     Osmo::~Osmo()
@@ -79,7 +80,6 @@
 
     OsmoConfig* Osmo::getConfig()
     {
-        OsmoConfig* config=new OsmoConfig;
         config->id=id;
         config->pL=pL;
         config->switch1Pin=switch1Pin;
