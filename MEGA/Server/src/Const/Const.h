@@ -12,6 +12,7 @@
 #define NDIGITALPIN 33
 #define NANALOGPIN 6
 #define NMAXCONTROLLERS 5
+#define MAX_REFLOW_MILLIS 10000
 #define WATCHDOG_ENABLED false
 
 //parametri di rete
@@ -30,7 +31,7 @@ const int CONFIGJSONSIZE=(
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(5) 
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)
-                            +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
+                            +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)
                         );
 
 

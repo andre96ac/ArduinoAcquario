@@ -10,7 +10,7 @@ class OsmoConfig
         int id;
         Led *pL;
         byte switch1Pin, switch2Pin;
-        bool osmoState, switch1State, switch2State;
+        bool osmoState, switch1State, switch2State, emptyError;
 };
 
 class Osmo
@@ -19,7 +19,8 @@ class Osmo
         int id;
         Led *pL;
         byte switch1Pin, switch2Pin;
-        bool osmoState, switch1State, switch2State;
+        bool osmoState, switch1State, switch2State, emptyError;
+        long int reflowStartTime;
     public: 
         Osmo(int identificativo, Led *led, byte normalSwitch, byte emergencySwitch);
 

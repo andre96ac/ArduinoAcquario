@@ -12,6 +12,8 @@
         pinMode(switch1Pin, INPUT);
         pinMode(switch2Pin, INPUT);
         osmoState=SPENTO;
+        emptyError=false;
+        reflowStartTime=0;
     };
 
     Osmo::~Osmo()
@@ -24,8 +26,9 @@
     {
         if (stato==ACCESO)
         {
+            emptyError=false;
             pL->spegni();
-            osmoState=ACCESO;
+            osmoState=ACCESO;    
         }
         else
         {
@@ -51,9 +54,26 @@
         if (osmoState==ACCESO)
         {
             if((switch1State==ACCESO)&&(switch2State==ACCESO))
+            {
                 pL->accendi();
+                //se sto iniziando ora il reflow, mi annoto il tempo
+                if (reflowStartTime==0)
+                {
+                    reflowStartTime=millis();
+                }
+                //se ho superato il tempo massimo di reflow, spengo l'osmo ed indico l'errore
+                else if (millis()-MAX_REFLOW_MILLIS>=reflowStartTime)
+                {
+                    reflowStartTime=0;
+                    emptyError=true;
+                    setState(SPENTO);
+                }
+            }
             else
+            {
+                reflowStartTime=0;
                 pL->spegni();
+            }
         } 
     }
 
@@ -67,6 +87,7 @@
         config->osmoState=osmoState;
         config->switch1State=switch1State;
         config->switch2State=switch2State;
+        config->emptyError=emptyError;
         return config;
     }
 

@@ -547,6 +547,7 @@ bool Database:: deleteOsmo(int id)
         jsonOsmo["stateSwitch1"]=osmos[i]->getConfig()->switch1State;
         jsonOsmo["stateSwitch2"]=osmos[i]->getConfig()->switch2State;
         jsonOsmo["state"]=osmos[i]->getConfig()->osmoState;
+        jsonOsmo["emptyError"]=osmos[i]->getConfig()->emptyError;
       }
     }
     //ora che il json è pronto, lo spedisco al client
