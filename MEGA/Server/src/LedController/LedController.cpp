@@ -2,9 +2,9 @@
 
 
   
-    LedController::LedController(int identifiativo)
+    LedController::LedController(int identificativo)
     {
-      id=identifiativo;
+      id=identificativo;
       time=0;
       state=SPENTO;
     };

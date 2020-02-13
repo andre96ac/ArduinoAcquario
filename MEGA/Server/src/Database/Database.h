@@ -60,8 +60,8 @@ class Database
     bool deleteOsmo (int id);
        
 
-    StaticJsonDocument<CONFIGJSONSIZE> Database::prepareJson();
-    void loadFromFile(File file);
+    StaticJsonDocument<CONFIGJSONSIZE> prepareJson();
+    void loadFromFile(char* nomeFile);
     void executeTimingFunctions();
     void setClock(byte year, byte month, byte day, byte hour, byte minute);
 

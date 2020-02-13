@@ -57,3 +57,15 @@
       {
         return pin;
       }
+
+      void Led::setState(bool scelta)
+      {
+        if (scelta==ACCESO)
+        {
+          accendi();
+        }
+        else
+        {
+          spegni();
+        }
+      }

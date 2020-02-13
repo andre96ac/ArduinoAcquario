@@ -13,7 +13,7 @@ class LedController
     unsigned long time;
     bool state;
   public:
-    LedController(int identifiativo);
+    LedController(int identificativo);
     
     ~LedController();
     

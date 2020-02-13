@@ -18,6 +18,7 @@
 #include "./Database/Database.cpp"
 #include "./Termometro/Termometro.cpp"
 #include "./Osmo/Osmo.cpp"
+#include "./SpiController/SpiController.cpp"
 
 //creo l'orologio di sistema
 RTC_DS1307 orologio;
@@ -42,7 +43,7 @@ void setup()
   orologio.begin();
   Ethernet.begin(MAC, IP);
   server.begin();
-  SD.begin(PIN_SD);
+  SpiController.begin(PIN_ETH,PIN_SD);
 
   //avvisami se l'orologio non sta funzionando
   if (! orologio.isrunning()) 
@@ -57,40 +58,40 @@ void setup()
   Serial.print(F("Free RAM at start: "));
   Serial.println(freeRam());
 
-  //se c'è una sd funzionante
+  // se c'è una sd funzionante
+  SpiController.switchToSd();
   if (SD.begin(PIN_SD))
   {
     Serial.println(F("SD rilevata"));
     //leggo il contatore del numero di reset
     const byte RESET_COUNT=EEPROM.read(RESET_COUNT_ADDRESS);
+    //se abbiamo raggiunto il numero massimo di riavvii
     if (RESET_COUNT>=N_MAX_RESET)
     {
-      //riavvio, non carico i dati e ma resetto il contatore
+      //riavvio, non carico i dati ma resetto il contatore ed elimino il vecchio file config
       Serial.println(F("Reset completato"));
       EEPROM.write(RESET_COUNT_ADDRESS,0);
-      //qui dovrò anche eliminare il file e ricrearlo
+      SD.remove(CONFIG_FILE_NAME);
     }
     else
     {
       //riavvio caricando i dati, ed incremento il contatore
       Serial.println(F("Tentativo di ripristino della configurazione"));
       EEPROM.write(RESET_COUNT_ADDRESS, RESET_COUNT+1);
-      configFile=SD.open(("config.txt", FILE_READ));
-      db.loadFromFile(configFile);
+      db.loadFromFile(CONFIG_FILE_NAME);
     }
   }
+  //se non c'è sd, avvio senza caricare nessuna configurazione
   else
   {
     Serial.println(F("SD non rilevata... Reset completato"));
     EEPROM.write(RESET_COUNT_ADDRESS,0);
   }
-  
-  
+  SpiController.switchToEth();
 }
  
 void loop() 
 {
-
   char c;
   String request; 
   int nParams;
@@ -308,13 +309,20 @@ void loop()
         Serial.print("Free RAM now: ");
         Serial.println(freeRam());
 
-        //TESTME##########################################################################################
-        //salvo il json su sd
-        if (SD.open("config.txt",FILE_WRITE))
-        {
-          configFile=SD.open("config.txt",FILE_WRITE);
-          serializeJson(db.prepareJson(), configFile);
+        //faccio lo switch sull'sd
+        SpiController.switchToSd();
+        //se c'è la sd salvo il json su sd
+        if (SD.begin(PIN_SD))
+         {
+          SD.remove(CONFIG_FILE_NAME);
+          configFile=SD.open(CONFIG_FILE_NAME,FILE_WRITE);
+          if(configFile)
+          {
+            serializeJson(db.prepareJson(), configFile);
+            configFile.close();
+          }
         }
+        SpiController.switchToEth();
       }
       else //altrimenti
       {

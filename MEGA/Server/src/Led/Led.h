@@ -18,6 +18,7 @@ class Led
       void blink(int millis);
       void cambiaStato(void);
       int returnPin(void);
+      void setState(bool scelta);
 };
 
 

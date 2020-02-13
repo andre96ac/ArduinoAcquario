@@ -12,11 +12,13 @@
 #define NDIGITALPIN 33
 #define NANALOGPIN 6
 #define NMAXCONTROLLERS 5
-#define MAX_REFLOW_MILLIS 10000
-#define WATCHDOG_ENABLED false
-#define RESET_COUNT_ADDRESS 1
-#define N_MAX_RESET 2
-#define PIN_SD 10
+#define MAX_REFLOW_MILLIS 10000 //il tempo di rabbocco massimo prima del blocco del controller
+#define WATCHDOG_ENABLED false //abilitazione del watchdog
+#define RESET_COUNT_ADDRESS 1 //l'indirizzo in EEPROM del contatore dei reset
+#define N_MAX_RESET 2 //il numero massimo dei riavvii da effettuare prima di resettare la scheda
+#define PIN_SD 4 //il pin del lettore sd
+#define PIN_ETH 10
+#define CONFIG_FILE_NAME "config.txt" //il nume del file di configurazione
 
 //parametri di rete
 #define PORT 11111 //porta del server

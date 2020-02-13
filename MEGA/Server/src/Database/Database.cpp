@@ -1,6 +1,7 @@
 #include "Database.h"
 
 #include <RTClib.h>
+#include <SD.h>
 
 #include "../Const/Const.h"
 
@@ -11,13 +12,13 @@
       dPinsBusy[1]=1;
       dPinsBusy[2]=0;
       dPinsBusy[3]=0;
-      dPinsBusy[4]=0;
+      dPinsBusy[4]=1;//utilizzato per l'SD
       dPinsBusy[5]=0;
       dPinsBusy[6]=0;
       dPinsBusy[7]=0;
       dPinsBusy[8]=0;
       dPinsBusy[9]=0;
-      dPinsBusy[10]=1;
+      dPinsBusy[10]=1;//utilizzato per l'ethernet
       dPinsBusy[11]=1;
       dPinsBusy[12]=1;
       dPinsBusy[13]=1;
@@ -554,11 +555,114 @@ bool Database:: deleteOsmo(int id)
   };
 
   //######################################### QUI BISOGNA IMPLEMENTARE IL BINDING
-  void Database::loadFromFile(File file)
+  void Database::loadFromFile(char* nomeFile)
   {
+    File file;
+    file=SD.open(nomeFile);
+    // creo il Json
     StaticJsonDocument<CONFIGJSONSIZE>(jsonDocument);
-    deserializeJson(jsonDocument, file);
-    serializeJson(jsonDocument, Serial);
+    //deserializzo il contenuto del file all'interno del json
+    if (file)
+    {
+      deserializeJson(jsonDocument, file);
+    }
+
+    //carico dal json l'array dpinbusy
+    int i=0;
+    JsonArray jsonBusys=jsonDocument["dpinbusy"].as<JsonArray>();
+    for (JsonObject jsonBusy : jsonBusys )
+    {
+      dPinsBusy[i]=jsonBusy;
+      i++;
+    }
+
+    //carico i leds
+    i=0;
+    JsonArray jsonLeds=jsonDocument["leds"].as<JsonArray>();
+    for (JsonObject jsonLed : jsonLeds)
+    {
+      leds[i]=new Led(jsonLed["id"],0);
+      leds[i]->setState(jsonLed["stato"]);
+      leds[i]->isBusy(jsonLed["busy"]);
+      i++;
+    }
+
+    //carico i controllers
+    JsonArray jsonControllers=jsonDocument["controllers"].as<JsonArray>();
+    i=0;
+    for (JsonObject jsonController : jsonControllers)
+    {
+      controllers[i]=new LedController((int)jsonController["id"]);
+      controllers[i]->setLeds(
+        (leds[ledPosition(jsonController["idled1"])]),
+        (leds[ledPosition(jsonController["idled2"])])
+        );
+      controllers[i]->setTime(jsonController["deltatime"]);
+      controllers[i]->setState(jsonController["state"]);
+      i++;
+    }
+
+    //carico i temporizzatori
+    JsonArray jsonTemporizzatori=jsonDocument["temmporizzatori"].as<JsonArray>();
+    i=0;
+    for (JsonObject jsonTemporizzatore : jsonTemporizzatori)
+    {
+      temporizzatori[i]=new Temporizzatore(jsonTemporizzatore["id"], pClock);
+      temporizzatori[i]->setLed(leds[ledPosition(jsonTemporizzatore["idled"])]);
+      temporizzatori[i]->setAccensione(jsonTemporizzatore["hacc"],jsonTemporizzatore["minacc"]);
+      temporizzatori[i]->setSpegnimento(jsonTemporizzatore["hspegn"],jsonTemporizzatore["minspegn"]);
+      temporizzatori[i]->setState(jsonTemporizzatore["state"]);
+      i++;
+    }
+
+    //carico i termometri
+    i=0;
+    JsonArray jsonTermometri=jsonDocument["termometri"].as<JsonArray>();
+    for (JsonObject jsonTermometro : jsonTermometri)
+    {
+      int tipo=jsonTermometro["type"];
+      if(tipo==TERMOMETRO)
+      {
+        termometri[i]=new Termometro(jsonTermometro["id"],jsonTermometro["pinterm"]);
+      }
+      else if(tipo==TERMOSTATO)
+      {
+        termometri[i]=new Termometro(
+          jsonTermometro["id"],
+          jsonTermometro["pinterm"],
+          leds[ledPosition(jsonTermometro["idrisc"])],
+          jsonTermometro["settemp"]
+          );
+      }
+      else if (tipo==CLIMA)
+      {
+        termometri[i]=new Termometro(
+          jsonTermometro["id"],
+          jsonTermometro["pinterm"],
+          leds[ledPosition(jsonTermometro["idrisc"])],
+          leds[ledPosition(jsonTermometro["idrefrig"])],
+          jsonTermometro["settemp"],
+          jsonTermometro["deltatemp"]
+          );
+      }
+      termometri[i]->state(jsonTermometro["stato"]);
+      i++;
+    }
+
+    //carico gli osmoregolatori
+    i=0;
+    JsonArray jsonOsmos=jsonDocument["osmos"].as<JsonArray>();
+    for (JsonObject jsonOsmo: jsonOsmos)
+    {
+      osmos[i]= new Osmo(
+        jsonOsmo["id"],
+        leds[ledPosition(jsonOsmo["idled"])],
+        jsonOsmo["idSwitch1"],
+        jsonOsmo["idSwitch2"]        
+        );
+        osmos[i]->setState(jsonOsmo["state"]);
+      i++;
+    }
   }
 
   void Database::executeTimingFunctions()
