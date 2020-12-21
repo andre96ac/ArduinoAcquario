@@ -8,6 +8,7 @@
 #include "../Temporizzatore/Temporizzatore.h" 
 #include "../Termometro/Termometro.h"
 #include "../Osmo/Osmo.h"
+#include "../Plafo/Plafo.h"
 
 #include "../Const/Const.h"
 
@@ -20,6 +21,7 @@ class Database
     Temporizzatore *temporizzatori[NMAXCONTROLLERS];
     Termometro *termometri[NMAXCONTROLLERS];
     Osmo *osmos[NMAXCONTROLLERS];
+    Plafo plafoniera;
     RTC_DS1307 *pClock;
 
   public:
@@ -58,6 +60,17 @@ class Database
     int osmoPosition (int id);
     bool changeOsmoState (int id);
     bool deleteOsmo (int id);
+
+    bool addPlafoChannel(byte presa);
+    bool deletePlafoChannel(byte presa);
+    bool setStatePlafoChannel(byte presa, byte potenza);
+    bool setTimerPlafoChannel(byte presa, int hAcc, int minAcc, int hSpegn, int minSpegn, int minDurata);
+    bool changeTypeAccPlafoChannel(byte presa);
+    bool setPlafoFan(byte presa);
+    int plafoChannelPosition(byte presa);
+
+
+
        
 
     StaticJsonDocument<CONFIGJSONSIZE> prepareJson();

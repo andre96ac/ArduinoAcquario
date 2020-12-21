@@ -7,6 +7,7 @@ import { OsmoModel } from './osmo.model';
 export class ConfigModel
 {
     systemtime: SystemTime = new SystemTime;
+    // systemtime:Date;
     leds:LedModel[]=[];
     controllers:ControllerModel[]=[];
     temporizzatori:TemporizzatoreModel[]=[];

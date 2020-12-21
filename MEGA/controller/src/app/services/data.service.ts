@@ -34,7 +34,7 @@ export class DataService {
         this._config.termometri=data['termometri'];
         this._config.dpinbusy=data['dpinbusy'];
         this._config.osmo=data['osmos'];
-        this._config.systemtime=data['systemtime']
+        this._config.systemtime=data['systemtime'];
 
         //riordino gli elementi
         this._config.leds.sort((a, b)=> a.id-b.id);
@@ -285,6 +285,27 @@ export class DataService {
       });
   }
 
+  setClock(orario:Date)
+  {
+    
+    this.httpClient.get<any>(
+      (this.localService.myUrl+
+      'setclock&'+
+      orario.getFullYear().toString().substring(2,4)+'&'+
+      (orario.getMonth()+1)+'&'+
+      orario.getDate()+'&'+
+      orario.getHours()+'&'+
+      orario.getMinutes()+'*'),
+      {
+        observe:'response',
+        responseType:'text' as 'json'
+      }
+    )
+    .subscribe(risposta=>{
+      console.log(risposta);
+      this.getConfig();
+    });
+  }
   
  /* //Gestisce gli errori di risposta
   private handleError(error: HttpErrorResponse) {

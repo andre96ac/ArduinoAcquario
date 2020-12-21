@@ -37,6 +37,10 @@ const int CONFIGJSONSIZE=(
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(7)
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)
                             +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)
+
+                            +JSON_OBJECT_SIZE(3)//l'oggetto "plafoniera"
+                            +JSON_ARRAY_SIZE(NMAXCONTROLLERS)//l'array di canali della plafoniera
+                            +NMAXCONTROLLERS*JSON_OBJECT_SIZE(8)//i singoli oggetti "canale"
                         );
 
 

@@ -443,6 +443,111 @@ bool Database:: deleteOsmo(int id)
 }
 
   
+//################# FUNZIONI PLAFO #######################
+
+bool Database::addPlafoChannel(byte presa)
+{
+  bool error=true;
+  if (dPinsBusy[presa]==false)
+  {
+    for (int i=0; i<NMAXCONTROLLERS; i++)
+    {
+      if (plafoniera.ligthChannels[i]==NULL)
+      {
+        plafoniera.ligthChannels[i]=new Channel(presa, pClock);
+        dPinsBusy[presa]=true;
+        error=false;
+        break;
+      }
+    }
+  }
+  return error;
+};
+
+int Database::plafoChannelPosition(byte presa)
+{
+  int posizione=-1;
+  for (int i=0; i<NMAXCONTROLLERS;i++)
+  {
+    if (plafoniera.ligthChannels[i]->getPresa()==presa)
+    {
+      posizione=i;
+      break;
+    }
+  }
+  return posizione;
+};
+
+bool Database::deletePlafoChannel(byte presa)
+{
+  bool error=true;
+  int posizione=plafoChannelPosition(presa);
+  if (posizione>=0)
+  {
+    dPinsBusy[presa]=false;
+    delete plafoniera.ligthChannels[posizione];
+    plafoniera.ligthChannels[posizione]=NULL;
+    error=false;
+  }
+  return error;
+};
+
+bool Database::setStatePlafoChannel(byte presa, byte potenza)
+{
+  bool error=true;
+  int posizione=plafoChannelPosition(presa);
+  if (posizione>=0)
+  {
+    plafoniera.ligthChannels[posizione]->setStatoAccensione(potenza);
+    error=false;
+  }
+  return error;
+};
+
+bool Database::setTimerPlafoChannel(byte presa, int hAcc, int minAcc, int hSpegn, int minSpegn, int minDurata)
+{
+  bool error=true;
+  int posizione=plafoChannelPosition(presa);
+  if (posizione>=0)
+  {
+    plafoniera.ligthChannels[posizione]->setTimer(new DateTime(0,0,0,hAcc,minAcc,0),new DateTime(0,0,0,hSpegn,minSpegn));
+    plafoniera.ligthChannels[posizione]->setDurata(minDurata);
+    error=false;
+  }
+  return error;
+};
+
+bool Database::changeTypeAccPlafoChannel(byte presa)
+{
+  int posizione=plafoChannelPosition(presa);
+  bool error=true;
+  if (posizione>=0)
+  {
+    plafoniera.ligthChannels[posizione]->changeTipoAccensione();
+    error=false;
+  }
+  return error;
+}
+
+bool Database::setPlafoFan(byte presa)
+{
+  bool error=true;
+  if (dPinsBusy[presa]==false)
+  {
+    if (plafoniera.getFanPin()<NDIGITALPIN)
+    {
+      dPinsBusy[plafoniera.getFanPin()]=false;
+    }
+    dPinsBusy[presa]=true;
+    plafoniera.setFanPin(presa);    
+    error=false;
+  }
+  return error;
+}
+
+
+
+
 
 //################ FUNZIONI GENERALI ######################
 
@@ -457,6 +562,8 @@ bool Database:: deleteOsmo(int id)
     JsonArray jsonTermometri=jsonDocument.createNestedArray("termometri");
     JsonArray jsonOsmos=jsonDocument.createNestedArray("osmos");
     JsonArray jsonDPinBusy=jsonDocument.createNestedArray("dpinbusy");
+    JsonObject jsonPlafo=jsonDocument.createNestedObject("plafoniera");
+    JsonArray jsonChannels=jsonPlafo.createNestedArray("channels");
 
     //recupero data ed ora di sistema e la inserisco nel json
     DateTime now=pClock->now();
@@ -467,6 +574,26 @@ bool Database:: deleteOsmo(int id)
     jsonSystemTime["minute"]=now.minute();
     jsonSystemTime["second"]=now.second();
 
+    //inserisco nel json tutti i dati della plafoniera
+    jsonPlafo["fanpin"]=plafoniera.getFanPin();
+    jsonPlafo["fanstate"]=plafoniera.getFanState();
+    //ora inserisco nell'oggetto plafoniera, tutti i dati di tutti i canali
+    for (int i=0; i<NMAXCONTROLLERS; i++)
+    {
+      if(plafoniera.ligthChannels[i]!=NULL)
+      {
+        JsonObject jsonChannel =jsonChannels.createNestedObject();
+        jsonChannel["pin"]=plafoniera.ligthChannels[i]->getPresa();
+        jsonChannel["tipoaccensione"]=plafoniera.ligthChannels[i]->getTipoAccensione();
+        jsonChannel["statoaccensione"]=plafoniera.ligthChannels[i]->getStato();
+        jsonChannel["hacc"]=plafoniera.ligthChannels[i]->getAccensione().hour();
+        jsonChannel["minacc"]=plafoniera.ligthChannels[i]->getAccensione().minute();
+        jsonChannel["hspegn"]=plafoniera.ligthChannels[i]->getSpegnimento().hour();
+        jsonChannel["minspegn"]=plafoniera.ligthChannels[i]->getSpegnimento().minute();
+        jsonChannel["durataciclo"]=plafoniera.ligthChannels[i]->getDurataAccensione();
+      }
+    }
+    
 
 
     //scorro l'array dpinbusy
@@ -551,6 +678,8 @@ bool Database:: deleteOsmo(int id)
         jsonOsmo["emptyError"]=osmos[i]->getConfig()->emptyError;
       }
     }
+
+    //aggiungo i dati della plafo
     return jsonDocument;
   };
 
@@ -686,6 +815,8 @@ bool Database:: deleteOsmo(int id)
         osmos[i]->ceckLevel();
       //
     }  
+    //faccio funzionare la plafoniera (che regolerà la ventola e farà funzionare tutti i canali)
+    plafoniera.esegui();
   };
 
   void Database::setClock(byte year, byte month, byte day, byte hour, byte minute)

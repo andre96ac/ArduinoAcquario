@@ -19,6 +19,8 @@
 #include "./Termometro/Termometro.cpp"
 #include "./Osmo/Osmo.cpp"
 #include "./SpiController/SpiController.cpp"
+#include "./Plafo/Plafo.cpp"
+#include "./Plafo/Channel.cpp"
 
 //creo l'orologio di sistema
 RTC_DS1307 orologio;
@@ -250,6 +252,49 @@ void loop()
     else if (*(messaggio.returnComando())=="removeosmo")
     {
       executionError= db.deleteOsmo(
+        (messaggio.returnParams()[0])
+      );
+    }
+
+    else if (*(messaggio.returnComando())=="addplafochannel")
+    {
+      executionError= db.addPlafoChannel(
+        (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="deleteplafochannel")
+    {
+      executionError= db.deletePlafoChannel(
+        (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="setstateplafochannel")
+    {
+      executionError= db.setStatePlafoChannel(
+        (messaggio.returnParams()[0]),
+        (messaggio.returnParams()[1])
+      );
+    }
+    else if (*(messaggio.returnComando())=="settimerplafochannel")
+    {
+      executionError= db.setTimerPlafoChannel(
+        (messaggio.returnParams()[0]),
+        (messaggio.returnParams()[1]),
+        (messaggio.returnParams()[2]),
+        (messaggio.returnParams()[3]),
+        (messaggio.returnParams()[4]),
+        (messaggio.returnParams()[5])
+      );
+    }
+    else if (*(messaggio.returnComando())=="changetypeaccplafochannel")
+    {
+      executionError= db.changeTypeAccPlafoChannel(
+        (messaggio.returnParams()[0])
+      );
+    }
+    else if (*(messaggio.returnComando())=="setplafofan")
+    {
+      executionError= db.setPlafoFan(
         (messaggio.returnParams()[0])
       );
     }

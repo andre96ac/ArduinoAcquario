@@ -4,22 +4,50 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Impostazioni</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button fill="clear" (click)="onSubmit()">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item>
-      <ion-label position="floating">IP della rete:</ion-label>
-      <ion-input type="text" [placeholder]="loadedIp" [(ngModel)]="loadedIp" ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Porta:</ion-label>
-      <ion-input type="number" [placeholder]="loadedPort" [(ngModel)]="loadedPort" ></ion-input>
-    </ion-item>
+    <ion-item-group>
+      <ion-item-divider color="light">
+        <ion-icon slot="start" name="globe"></ion-icon>
+        <ion-label class="ion-no-margin">Impostazioni di rete</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label position="floating">IP della rete:</ion-label>
+        <ion-input type="text" [placeholder]="loadedIp" [(ngModel)]="loadedIp" ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Porta:</ion-label>
+        <ion-input type="number" [placeholder]="loadedPort" [(ngModel)]="loadedPort" ></ion-input>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-divider color="light">
+      <ion-icon slot="start" name="globe"></ion-icon>
+      <ion-label class="ion-no-margin">Impostazioni dispositivo</ion-label>
+    </ion-item-divider>
   </ion-list>
-  <ion-button fill="outline" expand="block" (click)="onSubmit()">
-    <ion-icon name="checkbox-outline"></ion-icon>
-    Conferma
-  </ion-button>
+  <ion-card>
+    <ion-card-content>
+      <ion-row>
+        <ion-col size="8">
+          <ion-card-subtitle class="ion-text-center">Orario Dispositivo</ion-card-subtitle>
+          <h1 class="ion-text-center">{{ myHour|date:'HH:mm:ss'}}</h1>
+          <ion-card-subtitle class="ion-text-center">Data Dispositivo</ion-card-subtitle>
+          <h1 class="ion-text-center">{{ myHour|date:'dd/MM/yy' }}</h1>
+        </ion-col>
+        <ion-col size="4" class="ion-text-center ion-align-self-center">
+          <ion-button size="large" fill="outline" (click)="syncHour()">
+            <ion-icon name="sync"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
