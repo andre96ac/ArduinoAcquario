@@ -1,8 +1,8 @@
 {
-  "name": "Controller",
+  "name": "arduinoacquario",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Andrea Cuppini",
+  "homepage": "",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
