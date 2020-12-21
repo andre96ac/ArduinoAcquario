@@ -1,4 +1,4 @@
-aaa
+
 // Copyright 2020 Andrea Cuppini
 
 // This file is part of ArduinoAcquario.
